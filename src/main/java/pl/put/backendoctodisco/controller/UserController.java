@@ -1,6 +1,8 @@
 package pl.put.backendoctodisco.controller;
 
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.service.UserService;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 
 @RestController
 public class UserController  {
@@ -28,10 +35,25 @@ public class UserController  {
     }
 
     @PostMapping("user/login")
-    public ResponseEntity<Boolean> loginUser(@RequestBody User user){
+    public ResponseEntity<String> loginUser(@RequestBody User user){
         Boolean foundUser = userService.findByLogin(user);
+        Long now = System.currentTimeMillis();
 
-        return new ResponseEntity<>(foundUser, HttpStatus.CREATED);
+        String key;
+        try {
+            key = Files.readAllLines(Paths.get("authorization.key")).get(0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String authToken = Jwts.builder()
+                .setSubject(user.getLogin()) // 1
+                .claim("roles", "user") // 2
+                .setIssuedAt(new Date(now)) // 3
+                .setExpiration(new Date(now + 10000)) // 4
+                .signWith(SignatureAlgorithm.HS256, key).compact(); // 5
+
+        return new ResponseEntity<>(authToken, HttpStatus.CREATED);
     }
 
 }
