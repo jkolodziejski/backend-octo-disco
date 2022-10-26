@@ -13,23 +13,25 @@ import pl.put.backendoctodisco.service.UserService;
 @RestController
 public class UserController  {
 
-
     private final UserService userService;
-
     @Autowired
     public UserController(UserService userService) {
         this.userService=userService;
     }
 
     //TODO Example of ENDPOINT
-    @PostMapping("createUser")
+    @PostMapping("user/register")
     public ResponseEntity<User> createUser(@RequestBody User user){
        User createdUser = userService.createUser(user);
 
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+       return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("user/login")
+    public ResponseEntity<Boolean> loginUser(@RequestBody User user){
+        Boolean foundUser = userService.findByLogin(user);
 
-
+        return new ResponseEntity<>(foundUser, HttpStatus.CREATED);
+    }
 
 }
