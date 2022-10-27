@@ -22,6 +22,7 @@ public class UserController  {
 
     private final UserService userService;
     @Autowired
+
     public UserController(UserService userService) {
         this.userService=userService;
     }
@@ -35,9 +36,14 @@ public class UserController  {
     }
 
     @PostMapping("user/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user){
-        Boolean foundUser = userService.findByLogin(user);
+    public ResponseEntity<String> loginUser(@RequestBody User user) throws Exception {
+        Boolean userFound = userService.findByLogin(user);
         Long now = System.currentTimeMillis();
+
+        if(!userFound){
+            GlobalControllerExceptionHandler handler = new GlobalControllerExceptionHandler();
+            handler.conflict();
+        }
 
         String key;
         try {
@@ -47,11 +53,11 @@ public class UserController  {
         }
 
         String authToken = Jwts.builder()
-                .setSubject(user.getLogin()) // 1
-                .claim("roles", "user") // 2
-                .setIssuedAt(new Date(now)) // 3
-                .setExpiration(new Date(now + 10000)) // 4
-                .signWith(SignatureAlgorithm.HS256, key).compact(); // 5
+                    .setSubject(user.getLogin()) // 1
+                    .claim("roles", "user") // 2
+                    .setIssuedAt(new Date(now)) // 3
+                    .setExpiration(new Date(now + 10000)) // 4
+                    .signWith(SignatureAlgorithm.HS256, key).compact(); // 5
 
         return new ResponseEntity<>(authToken, HttpStatus.CREATED);
     }
