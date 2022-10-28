@@ -14,7 +14,7 @@ public class Flashcard {
     private Long id;
 
     @Column(name = "language", nullable = false)
-    private Language language;
+    private String language;
 
     @Column(name = "word", nullable = false)
     private String word;
