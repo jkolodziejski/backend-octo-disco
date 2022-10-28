@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pl.put.backendoctodisco.entity.ApiError;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.exceptions.UserNotFoundException;
 import pl.put.backendoctodisco.service.UserService;
 
 import java.io.IOException;
@@ -36,15 +38,14 @@ public class UserController  {
     }
 
     @PostMapping("user/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) throws Exception {
+    public ResponseEntity<String> loginUser(@RequestBody User user) throws UserNotFoundException {
         Boolean userFound = userService.findByLogin(user);
-        Long now = System.currentTimeMillis();
 
         if(!userFound){
-            GlobalControllerExceptionHandler handler = new GlobalControllerExceptionHandler();
-            handler.conflict();
+            throw new UserNotFoundException();
         }
 
+        Long now = System.currentTimeMillis();
         String key;
         try {
             key = Files.readAllLines(Paths.get("authorization.key")).get(0);
