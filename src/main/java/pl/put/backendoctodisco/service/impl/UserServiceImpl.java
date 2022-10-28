@@ -26,11 +26,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean findByLogin(User user) {
+    public User findByLogin(User user) {
         List<User> users = userRepository.findByLogin(user.getLogin());
-        if(users.stream().findFirst().isPresent()){
-            return Objects.equals(users.stream().findFirst().get().getPassword(), user.getPassword());
+        if(users.isEmpty()){
+            return null;
         }
-        return false;
+        return users.stream().findFirst().get();
     }
 }
