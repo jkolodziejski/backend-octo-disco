@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.put.backendoctodisco.entity.ApiError;
+import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
@@ -26,7 +27,7 @@ import java.util.Date;
 public class UserController  {
 
     private final UserService userService;
-    @Autowired
+
 
     public UserController(UserService userService) {
         this.userService=userService;
@@ -70,5 +71,6 @@ public class UserController  {
 
         return new ResponseEntity<>(authToken, HttpStatus.CREATED);
     }
+
 
 }
