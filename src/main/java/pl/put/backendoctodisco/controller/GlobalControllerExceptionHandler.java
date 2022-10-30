@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.put.backendoctodisco.entity.ApiError;
+import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
+import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserNotFoundException;
 import pl.put.backendoctodisco.exceptions.WrongPasswordException;
 
@@ -18,6 +20,16 @@ class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(WrongPasswordException.class)
     public ResponseEntity<ApiError> wrongPasswordException(WrongPasswordException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
+
+    @ExceptionHandler(UserLoginAlreadyExistsException.class)
+    public ResponseEntity<ApiError> userLoginAlreadyExistsException(UserLoginAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
+
+    @ExceptionHandler(UserEmailAlreadyExistsException.class)
+    public ResponseEntity<ApiError> userEmailAlreadyExistsException(UserEmailAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
 }
