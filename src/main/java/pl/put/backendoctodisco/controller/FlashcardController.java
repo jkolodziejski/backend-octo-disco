@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.service.impl.FlashcardServiceImpl;
+import pl.put.backendoctodisco.service.FlashcardService;
 
 @RestController
 @RequestMapping("/flashcard")
 public class FlashcardController {
 
-    private final FlashcardServiceImpl flashcardService;
+    private final FlashcardService flashcardService;
 
-    public FlashcardController(FlashcardServiceImpl flashcardService) {
+    public FlashcardController(FlashcardService flashcardService) {
         this.flashcardService = flashcardService;
     }
 
