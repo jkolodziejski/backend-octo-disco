@@ -15,6 +15,7 @@ import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserNotFoundException;
 import pl.put.backendoctodisco.exceptions.WrongPasswordException;
 import pl.put.backendoctodisco.service.UserService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +41,7 @@ public class UserController  {
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user){
+    public ResponseEntity<User> createUser(@RequestBody(description = "User info") User user){
         try {
             User createdUser = userService.createUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -59,7 +60,7 @@ public class UserController  {
             @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) throws UserNotFoundException, WrongPasswordException {
+    public ResponseEntity<String> loginUser(@RequestBody(description = "User info") User user) throws UserNotFoundException, WrongPasswordException {
         User foundUser = userService.findByLogin(user);
 
         if(foundUser == null){

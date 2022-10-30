@@ -16,11 +16,11 @@ import java.util.Objects;
 public class Flashcard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(notes = "Flashcard ID", example = "1", required = false)
+    @ApiModelProperty(notes = "Flashcard ID", example = "1", required = false, hidden = true)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ApiModelProperty(notes = "Language of the word used (possible options: pl, en)", example = "pl", required = true)
+    @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "pl", required = true)
     @Column(name = "language", nullable = false)
     private String language;
 
