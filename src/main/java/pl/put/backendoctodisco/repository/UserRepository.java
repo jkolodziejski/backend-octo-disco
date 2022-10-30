@@ -8,7 +8,7 @@ import pl.put.backendoctodisco.entity.User;
 import java.util.List;
 
 @Repository
-public interface  UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByLogin(String name);
 
