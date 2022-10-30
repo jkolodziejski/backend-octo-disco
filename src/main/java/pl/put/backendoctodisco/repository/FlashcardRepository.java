@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import pl.put.backendoctodisco.entity.Flashcard;
 
 @Repository
-public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
-
-}
+public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {}

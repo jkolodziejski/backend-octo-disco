@@ -35,9 +35,11 @@ public class UserController  {
         this.userService=userService;
     }
 
-    @ApiOperation(value = "Add new user to database", notes = "Returns a use, which was created")
+    @ApiOperation(value = "Registers new user to database",
+                    notes = "Returns a created user")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved")
+            @ApiResponse(code = 201, message = "Successfully created"),
+            @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user){
@@ -50,10 +52,12 @@ public class UserController  {
     }
 
 
-    @ApiOperation(value = "Login to webserver", notes = "authToken")
+    @ApiOperation(value = "Login to webserver",
+                    notes = "Authorization Token for user")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved"),
-            @ApiResponse(code = 404, message = "Not found - The user was not found")
+            @ApiResponse(code = 200, message = "Successfully logged"),
+            @ApiResponse(code = 403, message = "Wrong password"),
+            @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User user) throws UserNotFoundException, WrongPasswordException {
