@@ -5,10 +5,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.service.FlashcardService;
 
@@ -22,9 +19,11 @@ public class FlashcardController {
         this.flashcardService = flashcardService;
     }
 
-    @ApiOperation(value = "Add a new flashcard to database", notes = "Returns a flashcard, which was added")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Add a new flashcard to database",
+                    notes = "Returns the created flashcard")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved")
+            @ApiResponse(code = 201, message = "Successfully created")
     })
     @PostMapping("/create")
     private ResponseEntity<Flashcard> createFlashcard(@RequestBody Flashcard flashcard) {

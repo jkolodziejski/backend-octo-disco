@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
@@ -35,8 +32,9 @@ public class UserController  {
         this.userService=userService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Registers new user to database",
-                    notes = "Returns a created user")
+                    notes = "Returns the created user")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
@@ -52,10 +50,11 @@ public class UserController  {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Login to webserver",
-                    notes = "Authorization Token for user")
+                    notes = "Returns authorization token for user")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully logged"),
+            @ApiResponse(code = 201, message = "Successfully logged"),
             @ApiResponse(code = 403, message = "Wrong password"),
             @ApiResponse(code = 404, message = "The user was not found")
     })
@@ -85,7 +84,7 @@ public class UserController  {
                     .setExpiration(new Date(now + 10000))
                     .signWith(SignatureAlgorithm.HS256, key).compact();
 
-        return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(authToken, HttpStatus.CREATED);
     }
 
 
