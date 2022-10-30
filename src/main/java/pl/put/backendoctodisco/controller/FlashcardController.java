@@ -27,13 +27,12 @@ import java.util.Date;
 public class FlashcardController {
 
     private final FlashcardServiceImpl service;
-    @Autowired
 
     public FlashcardController(FlashcardServiceImpl service) {
         this.service = service;
     }
 
-    @PostMapping("card")
+    @PostMapping("card/create")
     public ResponseEntity<Flashcard> createFlashcard(@RequestBody Flashcard flashcard){
         Flashcard createdFlashcard = service.createFlashcard(flashcard);
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);

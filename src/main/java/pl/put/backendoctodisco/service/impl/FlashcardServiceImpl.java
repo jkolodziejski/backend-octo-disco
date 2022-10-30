@@ -17,7 +17,7 @@ public class FlashcardServiceImpl{
     private final FlashcardRepository repository;
 
     @Autowired
-    public FlashcardServiceImpl(UserRepository userRepository, FlashcardRepository repository) {
+    public FlashcardServiceImpl(FlashcardRepository repository) {
         this.repository = repository;
     }
 
