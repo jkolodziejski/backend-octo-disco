@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.put.backendoctodisco.entity.User;
-import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserNotFoundException;
 import pl.put.backendoctodisco.exceptions.WrongPasswordException;
 import pl.put.backendoctodisco.service.UserService;
@@ -41,12 +39,9 @@ public class UserController  {
     })
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user){
-        try {
-            User createdUser = userService.createUser(user);
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (Exception | UserLoginAlreadyExistsException | UserEmailAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        }
+       User createdUser = userService.createUser(user);
+
+       return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
 
@@ -66,7 +61,7 @@ public class UserController  {
             throw new WrongPasswordException();
         }
 
-        long now = System.currentTimeMillis();
+        Long now = System.currentTimeMillis();
         String key;
         try {
             key = Files.readAllLines(Paths.get("authorization.key")).get(0);
