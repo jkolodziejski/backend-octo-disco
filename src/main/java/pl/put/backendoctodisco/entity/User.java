@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(notes = "User ID", example = "1", required = false)
+    @ApiModelProperty(notes = "User ID", example = "1")
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -26,4 +26,8 @@ public class User {
     @ApiModelProperty(notes = "User password", example = "pass", required = true)
     @Column(name = "password", nullable = false)
     private String password;
+
+    @ApiModelProperty(notes = "Authorization token", example = "asdfasdfasd")
+    @Column(name = "auth_token")
+    private String authToken;
 }

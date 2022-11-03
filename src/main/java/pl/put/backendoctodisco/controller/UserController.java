@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.put.backendoctodisco.entity.AuthToken;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
@@ -59,8 +60,9 @@ public class UserController  {
             @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) throws UserNotFoundException, WrongPasswordException {
+    public ResponseEntity<User> loginUser(@RequestBody User user) throws UserNotFoundException, WrongPasswordException {
         User foundUser = userService.findByLogin(user);
+        foundUser.setAuthToken(new AuthToken(foundUser).toString());
 
         if(foundUser == null){
             throw new UserNotFoundException();
@@ -69,22 +71,7 @@ public class UserController  {
             throw new WrongPasswordException();
         }
 
-        long now = System.currentTimeMillis();
-        String key;
-        try {
-            key = Files.readAllLines(Paths.get("authorization.key")).get(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        String authToken = Jwts.builder()
-                    .setSubject(user.getLogin())
-                    .claim("roles", "user")
-                    .setIssuedAt(new Date(now))
-                    .setExpiration(new Date(now + 10000))
-                    .signWith(SignatureAlgorithm.HS256, key).compact();
-
-        return new ResponseEntity<>(authToken, HttpStatus.CREATED);
+        return new ResponseEntity<>(foundUser, HttpStatus.CREATED);
     }
 
 
