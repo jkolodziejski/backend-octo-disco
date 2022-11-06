@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Flashcard;
+import pl.put.backendoctodisco.entity.responses.FlashcardRequest;
 import pl.put.backendoctodisco.service.FlashcardService;
 
 @RestController
@@ -26,8 +27,8 @@ public class FlashcardController {
             @ApiResponse(code = 201, message = "Successfully created")
     })
     @PostMapping("/create")
-    private ResponseEntity<Flashcard> createFlashcard(@RequestBody Flashcard flashcard) {
-        Flashcard createdFlashcard = flashcardService.createFlashcard(flashcard);
+    private ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest flashcardRequest) {
+        Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard((flashcardRequest)));
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
     }
 }
