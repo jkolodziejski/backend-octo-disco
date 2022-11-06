@@ -1,13 +1,14 @@
 package pl.put.backendoctodisco.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.Data;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.repository.UserRepository;
+import pl.put.backendoctodisco.service.UserService;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.crypto.SecretKey;
-import javax.persistence.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,12 +16,15 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.function.Function;
 
 
 public class AuthToken {
 
     private final static int SECOND = 1000;
     private final static int EXPIRATION_TIME_SEC = 3 * 60 * 60 * SECOND;
+
 
     private String token;
 
@@ -53,6 +57,13 @@ public class AuthToken {
                 .compact();
     }
 
+    public State checkToken() {
+        if(token.isEmpty()){
+            return State.EXPIRED;
+        }
+        return State.ACTIVE_USER;
+    }
+
     @Override
     public String toString() {
         return token;
@@ -75,4 +86,16 @@ public class AuthToken {
         String[] parts = src.split("\\.");
         return new String(decoder.decode(parts[part]));
     }
+
+    public enum State {
+        EMPTY, EXPIRED, ACTIVE_USER, ACTIVE_ADMIN
+    }
+
+    private class Payload {
+        private String sub;
+        private String roles;
+        private Long iat;
+        private Long exp;
+    }
+
 }

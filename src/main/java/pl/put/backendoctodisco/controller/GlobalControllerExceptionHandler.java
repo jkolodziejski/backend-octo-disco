@@ -3,11 +3,8 @@ package pl.put.backendoctodisco.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.utils.ApiError;
-import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.UserNotFoundException;
-import pl.put.backendoctodisco.exceptions.WrongPasswordException;
 
 
 @ControllerAdvice
@@ -30,6 +27,16 @@ class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(UserEmailAlreadyExistsException.class)
     public ResponseEntity<ApiError> userEmailAlreadyExistsException(UserEmailAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
+
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ResponseEntity<ApiError> tokenNotFoundException(TokenNotFoundException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ApiError> tokenExpiredException(TokenExpiredException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
 }

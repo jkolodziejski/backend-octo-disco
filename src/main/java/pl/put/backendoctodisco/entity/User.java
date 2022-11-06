@@ -27,7 +27,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ApiModelProperty(notes = "Authorization token", example = "asdfasdfasd")
+    @ApiModelProperty(notes = "Authorization token", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdfdXNlciIsInJvbGVzIjoidXNlciIsImlhdCI6MTY2Nzc1Njg4NiwiZXhwIjoxNjY3NzY3Njg2fQ.nK31xWzMEzhcxGpQj0QQQ6MbyLBxG5fTHIQ4S0nJ7w5_gN-vWaCDMt7RNt0YCI2k-hCGr6DvgIoaRn1kMD1V4Q")
     @Column(name = "auth_token")
     private String authToken;
 }
