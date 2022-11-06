@@ -1,13 +1,17 @@
 package pl.put.backendoctodisco.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
 import pl.put.backendoctodisco.repository.UserRepository;
+import pl.put.backendoctodisco.utils.AuthToken;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -32,11 +36,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findByLogin(User user) {
+    public Optional<User> findByLogin(User user) {
         List<User> users = userRepository.findByLogin(user.getLogin());
-        if(users.isEmpty()){
-            return null;
-        }
-        return users.stream().findFirst().get();
+        return users.stream().findFirst();
+    }
+
+    public AuthToken authorizeUser(User user) {
+        AuthToken token = new AuthToken(user);
+        userRepository.setUserInfoById(token.toString(), user.getId());
+        return token;
     }
 }
