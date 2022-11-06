@@ -37,7 +37,7 @@ public class FlashcardController {
                     notes = "Returns the created flashcard")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
-            @ApiResponse(code = 403, message = "Token not found")
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/create")
     private ResponseEntity<Flashcard> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException {
