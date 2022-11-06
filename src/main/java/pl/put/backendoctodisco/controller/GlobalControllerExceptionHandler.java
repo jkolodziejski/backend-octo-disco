@@ -3,7 +3,7 @@ package pl.put.backendoctodisco.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.put.backendoctodisco.entity.ApiError;
+import pl.put.backendoctodisco.utils.ApiError;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserNotFoundException;

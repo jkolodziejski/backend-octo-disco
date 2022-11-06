@@ -1,4 +1,4 @@
-package pl.put.backendoctodisco.entity;
+package pl.put.backendoctodisco.utils;
 
 import org.springframework.http.HttpStatus;
 
