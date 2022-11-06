@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.Hibernate;
 import pl.put.backendoctodisco.entity.responses.FlashcardRequest;
+import pl.put.backendoctodisco.repository.UserRepository;
+import pl.put.backendoctodisco.utils.AuthToken;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -41,12 +43,12 @@ public class Flashcard {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    public Flashcard(FlashcardRequest request){
+    public Flashcard(User user, FlashcardRequest request){
         language = request.getLanguage();
         word = request.getWord();
         translation = request.getTranslation();
         isGlobal = false;
-        userId = request.getUserId();
+        userId = user.getId();
     }
 
     @Override

@@ -17,12 +17,7 @@ public class FlashcardRequest {
     @Column(name = "translation", nullable = false)
     private String translation;
 
-    @ApiModelProperty(notes = "ID of the user who created the flashcard", example = "1", required = true)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     public String getLanguage() {return language;}
     public String getWord() {return word;}
     public String getTranslation() {return translation;}
-    public Long getUserId() {return userId;}
 }

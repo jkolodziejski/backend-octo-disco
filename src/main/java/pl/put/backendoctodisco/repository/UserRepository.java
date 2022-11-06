@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.put.backendoctodisco.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Repository
@@ -18,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByLogin(String name);
 
     List<User> findByEmail(String email);
+
+    List<User> findByAuthToken(String authToken);
 
     @Modifying
     @Query("update User u set u.authToken = ?1 where u.id = ?2")
