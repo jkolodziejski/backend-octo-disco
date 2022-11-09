@@ -30,10 +30,8 @@ import java.util.function.Function;
 
 public class AuthToken {
 
-    private final static int SECOND = 1000;
-    private final static int EXPIRATION_TIME_SEC = 20 * 60 * SECOND;
-//    private final static int EXPIRATION_TIME_SEC = 3 * 60 * 60 * SECOND;
-
+    private final static int MINUTE = 60 * 1000;
+    private final static int EXPIRATION_TIME_SEC = 180 * MINUTE;
 
     private String token;
 
