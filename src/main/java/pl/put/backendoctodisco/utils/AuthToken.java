@@ -1,18 +1,26 @@
 package pl.put.backendoctodisco.utils;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.exceptions.TokenExpiredException;
+import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
+import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
 import pl.put.backendoctodisco.repository.UserRepository;
 import pl.put.backendoctodisco.service.UserService;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.crypto.SecretKey;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Signature;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,9 +30,8 @@ import java.util.function.Function;
 
 public class AuthToken {
 
-    private final static int SECOND = 1000;
-    private final static int EXPIRATION_TIME_SEC = 3 * 60 * 60 * SECOND;
-
+    private final static int MINUTE = 60 * 1000;
+    private final static int EXPIRATION_TIME_SEC = 180 * MINUTE;
 
     private String token;
 
@@ -34,32 +41,48 @@ public class AuthToken {
 
     public AuthToken(User user) {
         long now = System.currentTimeMillis();
-        SecretKey key;
-        try {
-            String unhashedKey = Files.readAllLines(Paths.get("authorization.key")).get(0);
-            key = Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Date expirationDate = new Date((now + EXPIRATION_TIME_SEC));
 
-        Date expirationDate = new Date(now + EXPIRATION_TIME_SEC);
-
-        HashMap<String, Object> map = new HashMap<>(1);
-        map.put("typ", "JWT");
+        HashMap<String, Object> headers = new HashMap<>(1);
+        headers.put("typ", "JWT");
 
         this.token = Jwts.builder()
                 .setSubject(user.getLogin())
                 .claim("roles", "user")
                 .setIssuedAt(new Date(now))
                 .setExpiration(expirationDate)
-                .setHeader(map)
-                .signWith(key)
+                .setHeader(headers)
+                .signWith(getSecretKey())
                 .compact();
     }
 
-    public State checkToken() {
-        if(token.isEmpty()){
+    public boolean isEmpty(){
+        return token.isEmpty();
+    }
+
+    public static State validateToken(User user) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+        State currentState = new AuthToken(user.getAuthToken()).validateSignature();
+        switch (currentState) {
+            case FAULTY -> throw new TokenNotFoundException();
+            case EXPIRED -> throw new TokenExpiredException();
+            case UNAUTHORIZED -> throw new TokenUnauthorizedException();
+            default -> {
+                return currentState;
+            }
+        }
+    }
+
+    public State validateSignature(){
+        try {
+            Jwts.parser()
+                    .setSigningKey(getSecretKey())
+                    .parseClaimsJws(token).getBody();
+        } catch(ExpiredJwtException e) {
             return State.EXPIRED;
+        } catch(SignatureException e) {
+            return State.UNAUTHORIZED;
+        } catch(Exception e){
+            return State.FAULTY;
         }
         return State.ACTIVE_USER;
     }
@@ -69,17 +92,21 @@ public class AuthToken {
         return token;
     }
 
-    public String getHeaders(){
-        return encode(0);
+    public Payload getPayload(){
+        String json = encode(1);
+        Gson gson = new Gson();
+        return gson.fromJson(json, Payload.class);
     }
 
-    public String getPayload(){
-        return encode(1);
+    static private SecretKey getSecretKey(){
+        try {
+            String unhashedKey = Files.readAllLines(Paths.get("authorization.key")).get(0);
+            return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public String getSignature(){
-        return encode(2);
-    }
     private String encode(int part){
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String src = this.token;
@@ -88,10 +115,10 @@ public class AuthToken {
     }
 
     public enum State {
-        EMPTY, EXPIRED, ACTIVE_USER, ACTIVE_ADMIN
+        FAULTY, UNAUTHORIZED, EXPIRED, ACTIVE_USER, ACTIVE_ADMIN
     }
 
-    private class Payload {
+    private static class Payload {
         private String sub;
         private String roles;
         private Long iat;

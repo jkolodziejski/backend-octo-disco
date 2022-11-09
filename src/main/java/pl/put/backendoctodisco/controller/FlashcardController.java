@@ -15,6 +15,7 @@ import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.responses.FlashcardRequest;
 import pl.put.backendoctodisco.exceptions.TokenExpiredException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
+import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
@@ -41,14 +42,10 @@ public class FlashcardController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/create")
-    private ResponseEntity<Flashcard> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException {
+    private ResponseEntity<Flashcard> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
-        AuthToken tokenToCheck = new AuthToken(foundUser.getAuthToken());
-        switch (tokenToCheck.checkToken()) {
-            case EMPTY -> throw new TokenNotFoundException();
-            case EXPIRED -> throw new TokenExpiredException();
-        }
+        AuthToken.validateToken(foundUser);
 
         Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
@@ -62,17 +59,12 @@ public class FlashcardController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/pages")
-    private ResponseEntity<List<Flashcard>> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken,@PageableDefault(value = 25) Pageable pageable) throws TokenNotFoundException, TokenExpiredException {
+    private ResponseEntity<List<Flashcard>> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken,@PageableDefault(value = 25) Pageable pageable) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
-        AuthToken tokenToCheck = new AuthToken(foundUser.getAuthToken());
-
-        switch (tokenToCheck.checkToken()) {
-            case EMPTY -> throw new TokenNotFoundException();
-            case EXPIRED -> throw new TokenExpiredException();
-        }
+        AuthToken.validateToken(foundUser);
 
         List<Flashcard> flashcardList = flashcardService.getAllFlashcards(pageable);
-        return  new ResponseEntity<>(flashcardList,HttpStatus.OK);
+        return  new ResponseEntity<>(flashcardList, HttpStatus.OK);
     }
 }

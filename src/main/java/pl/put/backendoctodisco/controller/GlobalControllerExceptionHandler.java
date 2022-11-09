@@ -39,4 +39,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> tokenExpiredException(TokenExpiredException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(TokenUnauthorizedException.class)
+    public ResponseEntity<ApiError> tokenUnauthorizedException(TokenUnauthorizedException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }
