@@ -50,15 +50,16 @@ public class FlashcardController {
 
         AuthToken.validateToken(foundUser);
 
-        List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.getWord())
+        List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.getWord());
+        List <Flashcard> filteredFlashcards = foundFlashcards
                 .stream().filter(card -> card.getIsGlobal() || Objects.equals(card.getUserId(), foundUser.getId())) //users dictionary
                 .filter(card ->
                         card.getWord().equals(flashcardRequest.getWord())
-                        || card.getLanguage().equals(flashcardRequest.getLanguage())
-                        || card.getTranslation().equals(flashcardRequest.getTranslation())
+                        && card.getLanguage().equals(flashcardRequest.getLanguage())
+                        && card.getTranslation().equals(flashcardRequest.getTranslation())  //same flashcards
                 ).toList();
 
-        if(!foundFlashcards.isEmpty()){
+        if(!filteredFlashcards.isEmpty()){
             throw new FlashcardAlreadyExistsException();
         }
 
