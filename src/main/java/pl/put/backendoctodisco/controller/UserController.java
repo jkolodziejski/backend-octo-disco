@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.requests.LoginRequest;
+import pl.put.backendoctodisco.entity.requests.RegisterRequest;
 import pl.put.backendoctodisco.entity.responses.LoginResponse;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.entity.User;
@@ -38,8 +39,8 @@ public class UserController {
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> createUser(@RequestBody User user) throws UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
+        User createdUser = userService.createUser(new User(registerRequest));
         AuthToken token = userService.authorizeUser(createdUser);
         return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
     }
