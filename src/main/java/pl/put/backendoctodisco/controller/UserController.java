@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.put.backendoctodisco.entity.requests.LoginRequest;
 import pl.put.backendoctodisco.entity.responses.LoginResponse;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.entity.User;
@@ -53,14 +54,14 @@ public class UserController {
             @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody User user) throws UserNotFoundException, WrongPasswordException {
-        Optional<User> userToCheck = userService.findByLogin(user);
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, WrongPasswordException {
+        Optional<User> userToCheck = userService.findByLogin(loginRequest.login);
         if(userToCheck.isEmpty()){
             throw new UserNotFoundException();
         }
 
         User foundUser = userToCheck.get();
-        if(!foundUser.getPassword().equals(user.getPassword())){
+        if(!foundUser.getPassword().equals(loginRequest.password)){
             throw new WrongPasswordException();
         }
 
