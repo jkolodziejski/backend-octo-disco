@@ -42,9 +42,9 @@ public class Flashcard {
     private Long userId;
 
     public Flashcard(User user, FlashcardRequest request){
-        language = request.getLanguage();
-        word = request.getWord();
-        translation = request.getTranslation();
+        language = request.language;
+        word = request.word;
+        translation = request.translation;
         isGlobal = false;
         userId = user.getId();
     }

@@ -49,17 +49,17 @@ public class FlashcardController {
 
         AuthToken.validateToken(foundUser);
 
-        if(!Language.contains(flashcardRequest.getLanguage())){
+        if(!Language.contains(flashcardRequest.language)){
             throw new NonexistentLanguageException();
         }
 
-        List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.getWord());
+        List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.word);
         List <Flashcard> filteredFlashcards = foundFlashcards
                 .stream().filter(card -> card.getIsGlobal() || Objects.equals(card.getUserId(), foundUser.getId())) //users dictionary
                 .filter(card ->
-                        card.getWord().equals(flashcardRequest.getWord())
-                        && card.getLanguage().equals(flashcardRequest.getLanguage())
-                        && card.getTranslation().equals(flashcardRequest.getTranslation())  //same flashcards
+                        card.getWord().equals(flashcardRequest.word)
+                        && card.getLanguage().equals(flashcardRequest.language)
+                        && card.getTranslation().equals(flashcardRequest.translation)  //same flashcards
                 ).toList();
 
         if(!filteredFlashcards.isEmpty()){

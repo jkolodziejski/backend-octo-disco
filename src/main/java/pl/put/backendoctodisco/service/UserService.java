@@ -35,8 +35,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> findByLogin(User user) {
-        List<User> users = userRepository.findByLogin(user.getLogin());
+    public Optional<User> findByLogin(String login) {
+        List<User> users = userRepository.findByLogin(login);
         return users.stream().findFirst();
     }
 
