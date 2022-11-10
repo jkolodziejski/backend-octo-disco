@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
-import pl.put.backendoctodisco.exceptions.FlashcardAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.TokenExpiredException;
-import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
-import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
+import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
+import pl.put.backendoctodisco.utils.Language;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -42,13 +41,17 @@ public class FlashcardController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 409, message = "Flashcard already exists.")
+            @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
     })
     @PostMapping("/create")
-    private ResponseEntity<Flashcard> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyExistsException {
+    private ResponseEntity<Flashcard> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyExistsException, NonexistentLanguageException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
+
+        if(!Language.contains(flashcardRequest.getLanguage())){
+            throw new NonexistentLanguageException();
+        }
 
         List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.getWord());
         List <Flashcard> filteredFlashcards = foundFlashcards

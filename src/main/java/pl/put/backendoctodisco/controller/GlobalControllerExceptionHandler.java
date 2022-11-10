@@ -49,4 +49,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> flashcardAlreadyExistsException(FlashcardAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(NonexistentLanguageException.class)
+    public ResponseEntity<ApiError> nonexistentLanguageException(NonexistentLanguageException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }
