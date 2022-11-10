@@ -1,4 +1,4 @@
-package pl.put.backendoctodisco.entity.responses;
+package pl.put.backendoctodisco.entity.requests;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -3,9 +3,7 @@ package pl.put.backendoctodisco.entity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.Hibernate;
-import pl.put.backendoctodisco.entity.responses.FlashcardRequest;
-import pl.put.backendoctodisco.repository.UserRepository;
-import pl.put.backendoctodisco.utils.AuthToken;
+import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 
 import javax.persistence.*;
 import java.util.Objects;
