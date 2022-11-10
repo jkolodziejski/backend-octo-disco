@@ -44,4 +44,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> tokenUnauthorizedException(TokenUnauthorizedException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(FlashcardAlreadyExistsException.class)
+    public ResponseEntity<ApiError> flashcardAlreadyExistsException(FlashcardAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }

@@ -37,14 +37,10 @@ public class UserController {
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> createUser(@RequestBody User user){
-        try {
-            User createdUser = userService.createUser(user);
-            AuthToken token = userService.authorizeUser(createdUser);
-            return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
-        } catch (Exception | UserLoginAlreadyExistsException | UserEmailAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        }
+    public ResponseEntity<LoginResponse> createUser(@RequestBody User user) throws UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
+        User createdUser = userService.createUser(user);
+        AuthToken token = userService.authorizeUser(createdUser);
+        return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
     }
 
 
