@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.Flashcard;
+import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FlashcardService {
@@ -25,6 +27,11 @@ public class FlashcardService {
     public List<Flashcard> getAllFlashcards(Pageable pageable){
         Page<Flashcard> page =repository.findAll(pageable);
         return   page.getContent();
+    }
+
+    public List<Flashcard> findByWord(String word) {
+        List<Flashcard> flashcards = repository.findByWord(word);
+        return flashcards;
     }
 
 }
