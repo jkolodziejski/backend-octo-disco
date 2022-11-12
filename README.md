@@ -1,4 +1,3 @@
 # Documentation
 
-All documentation is available in [Swagger UI](http://localhost:8080/swagger-ui/).
-To see it, local server need to be run.
+All documentation for hosted backend is available at [Swagger UI](https://language-app-backend.herokuapp.com/swagger-ui/).
