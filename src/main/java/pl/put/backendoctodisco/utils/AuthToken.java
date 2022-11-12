@@ -1,7 +1,6 @@
 package pl.put.backendoctodisco.utils;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -90,12 +89,6 @@ public class AuthToken {
     @Override
     public String toString() {
         return token;
-    }
-
-    public Payload getPayload(){
-        String json = encode(1);
-        Gson gson = new Gson();
-        return gson.fromJson(json, Payload.class);
     }
 
     static private SecretKey getSecretKey(){

@@ -25,6 +25,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/flashcard")
+@CrossOrigin
 public class FlashcardController {
 
     private final FlashcardService flashcardService;
