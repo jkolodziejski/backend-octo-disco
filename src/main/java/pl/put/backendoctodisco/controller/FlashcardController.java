@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
+import pl.put.backendoctodisco.entity.responses.GetFlashcardsResponse;
 import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.utils.Language;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -71,19 +73,33 @@ public class FlashcardController {
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
     }
 
+
+
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database by page",
-            notes = "Returns list of flashcard")
+            notes = "Returns list of flashcard and size")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The resource has been fetched and transmitted in the message body"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/pages")
-    private ResponseEntity<List<Flashcard>> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken,@PageableDefault(value = 25) Pageable pageable) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private ResponseEntity<Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Choice choice, @PageableDefault(value = 25) Pageable pageable ) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
-
-        List<Flashcard> flashcardList = flashcardService.getAllFlashcards(pageable);
-        return  new ResponseEntity<>(flashcardList, HttpStatus.OK);
+        System.out.println(choice);
+        List<Flashcard> flashcardList ;
+        if(choice.equals(Choice.Global)){
+            flashcardList =  flashcardService.getAllFlashcardsGlobal(pageable);
+        }
+        else if(choice.equals(Choice.Local)) {
+            flashcardList = flashcardService.getFlashcardsUser(foundUser.getId(),pageable);
+        }
+        else if(choice.equals(Choice.Both)){
+            flashcardList = flashcardService.getAllFlashcards(pageable);
+        }
+        else {
+            flashcardList = new ArrayList<>();
+        }
+        return  new ResponseEntity<>(new GetFlashcardsResponse(flashcardList).generateResponse(), HttpStatus.OK);
     }
 }

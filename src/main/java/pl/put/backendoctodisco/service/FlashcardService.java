@@ -30,8 +30,17 @@ public class FlashcardService {
     }
 
     public List<Flashcard> findByWord(String word) {
-        List<Flashcard> flashcards = repository.findByWord(word);
-        return flashcards;
+        return  repository.findByWord(word);
+    }
+
+    public List<Flashcard> getAllFlashcardsGlobal(Pageable pageable){
+        Page<Flashcard> page = repository.findFlashcardByIsGlobalTrue(pageable);
+        return page.getContent();
+    }
+
+    public List<Flashcard> getFlashcardsUser(Long user_id, Pageable pageable){
+        Page<Flashcard> page = repository.findFlashcardByIsGlobalFalseAndUserId(user_id,pageable);
+        return  page.getContent();
     }
 
 }

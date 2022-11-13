@@ -1,8 +1,7 @@
 package pl.put.backendoctodisco.entity.responses;
 
 import io.swagger.annotations.ApiModelProperty;
-import pl.put.backendoctodisco.entity.User;
-import pl.put.backendoctodisco.utils.AuthToken;
+
 
 public class LoginResponse {
 
