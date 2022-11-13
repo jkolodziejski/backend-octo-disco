@@ -16,38 +16,38 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserRepository repository) {
+        this.repository = repository;
     }
 
     public User createUser(User user) throws UserLoginAlreadyExistsException, UserEmailAlreadyExistsException {
-        List<User> usersByLogin = userRepository.findByLogin(user.getLogin());
-        List<User> usersByEmail = userRepository.findByEmail(user.getEmail());
+        List<User> usersByLogin = repository.findByLogin(user.getLogin());
+        List<User> usersByEmail = repository.findByEmail(user.getEmail());
         if(!usersByLogin.isEmpty()){
             throw new UserLoginAlreadyExistsException();
         }
         if(!usersByEmail.isEmpty()){
             throw new UserEmailAlreadyExistsException();
         }
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     public Optional<User> findByLogin(String login) {
-        List<User> users = userRepository.findByLogin(login);
+        List<User> users = repository.findByLogin(login);
         return users.stream().findFirst();
     }
 
     public AuthToken authorizeUser(User user) {
         AuthToken token = new AuthToken(user);
-        userRepository.setUserInfoById(token.toString(), user.getId());
+        repository.setUserInfoById(token.toString(), user.getId());
         return token;
     }
 
     public User findUserByAuthToken(String authToken) throws TokenNotFoundException {
-        Optional<User> userToCheck = userRepository.findByAuthToken(authToken).stream().findFirst();
+        Optional<User> userToCheck = repository.findByAuthToken(authToken).stream().findFirst();
         if(userToCheck.isEmpty()){
             throw new TokenNotFoundException();
         }

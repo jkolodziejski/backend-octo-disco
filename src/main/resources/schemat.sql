@@ -15,6 +15,21 @@ CREATE TABLE WORD(
                      language varchar(100),
                      polishTranslation varchar(255)
 );
+
+CREATE TABLE flashcard_list_info(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	user_id int,
+	name varchar(100),
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE flashcard_lists(
+	flashcard_id int,
+	list_id int,
+	CONSTRAINT fk_flashcard FOREIGN KEY (flashcard_id) REFERENCES flashcard(id),
+	CONSTRAINT fk_list FOREIGN KEY (list_id) REFERENCES flashcard_list_info(id)
+);
+
 ALTER TABLE WORD ADD CONSTRAINT chk_language CHECK(language in ('en', 'pl'));
 
 

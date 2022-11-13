@@ -3,12 +3,14 @@ package pl.put.backendoctodisco.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.put.backendoctodisco.entity.requests.RegisterRequest;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
