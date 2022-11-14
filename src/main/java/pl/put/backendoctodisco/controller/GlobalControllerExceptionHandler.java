@@ -59,4 +59,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> flashcardListAlreadyExistsException(FlashcardListAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(FlashcardAlreadyInListException.class)
+    public ResponseEntity<ApiError> flashcardAlreadyInListException(FlashcardAlreadyInListException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }

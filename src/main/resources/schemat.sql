@@ -23,7 +23,8 @@ CREATE TABLE flashcard_list_info(
 	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-CREATE TABLE flashcard_lists(
+CREATE TABLE flashcard_list_content(
+    id int AUTO_INCREMENT PRIMARY KEY,
 	flashcard_id int,
 	list_id int,
 	CONSTRAINT fk_flashcard FOREIGN KEY (flashcard_id) REFERENCES flashcard(id),
