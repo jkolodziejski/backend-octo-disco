@@ -11,6 +11,7 @@ import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.entity.requests.AddListToFlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
@@ -19,6 +20,7 @@ import pl.put.backendoctodisco.service.FlashcardListService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
@@ -59,8 +61,8 @@ public class FlashcardListController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Add a new flashcard to the list in the database",
-            notes = "Returns ID's of both flashcard and list (and the connection entity ID as well)")
+    @ApiOperation(value = "Add a flashcard to the list in the database",
+            notes = "Returns ID's of both flashcard and list (and the connection entity ID as well).")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
@@ -72,6 +74,7 @@ public class FlashcardListController {
 
         AuthToken.validateToken(foundUser);
 
+        //TODO check if both list and flashcard exists and if they are owned by verified user
         FlashcardListContent flashcardListContent = new FlashcardListContent(addToFlashcardListRequest);
         Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
@@ -81,5 +84,32 @@ public class FlashcardListController {
 
         FlashcardListContent createdListContent = flashcardListService.addToFlashcardList(flashcardListContent);
         return new ResponseEntity<>(createdListContent, HttpStatus.CREATED);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Add a list of flashcards to the list in the database",
+            notes = "Returns ID's of both flashcard and list (and the connection entity ID as well) of every request that was approved.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @PostMapping("/add_cards")
+    private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyInListException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        ArrayList<FlashcardListContent> response = new ArrayList<>();
+
+        for(AddToFlashcardListRequest req : addToFlashcardListRequest.flashcards_requests){
+            FlashcardListContent flashcardListContent = new FlashcardListContent(req);
+            Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
+
+            if(foundFlashcardListContent.isEmpty()){
+                response.add(flashcardListService.addToFlashcardList(flashcardListContent));
+            }
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
