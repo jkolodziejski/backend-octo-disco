@@ -9,8 +9,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
 @ToString
 @RequiredArgsConstructor
 @Data
@@ -28,10 +26,10 @@ public class Flashcard {
     @ApiModelProperty(notes = "Word to learn", example = "Poland", required = true)
     @Column(name = "word", nullable = false)
     private String word;
-
-    @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
-    @Column(name = "translation", nullable = false)
-    private String translation;
+//
+//    @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
+//    @Column(name = "translation", nullable = false)
+//    private String translation;
 
     @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0", required = true)
     @Column(name = "is_global", nullable = false)
@@ -41,10 +39,12 @@ public class Flashcard {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+
+
     public Flashcard(User user, FlashcardRequest request){
         language = request.language;
         word = request.word;
-        translation = request.translation;
+        //translation = request.translation;
         isGlobal = false;
         userId = user.getId();
     }

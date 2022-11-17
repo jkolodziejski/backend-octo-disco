@@ -54,4 +54,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> nonexistentLanguageException(NonexistentLanguageException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(AliasAlreadyExistsException.class)
+    public ResponseEntity<ApiError> aliasAlreadyExistsException(AliasAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }
