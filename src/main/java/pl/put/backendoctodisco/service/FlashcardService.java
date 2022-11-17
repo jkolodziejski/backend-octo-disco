@@ -5,17 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class FlashcardService {
     private final FlashcardRepository repository;
 
-    @Autowired
+
     public FlashcardService(FlashcardRepository repository) {
         this.repository = repository;
     }

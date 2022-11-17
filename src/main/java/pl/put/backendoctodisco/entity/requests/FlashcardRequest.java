@@ -1,6 +1,7 @@
 package pl.put.backendoctodisco.entity.requests;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.NonNull;
 
 import javax.persistence.Column;
 
