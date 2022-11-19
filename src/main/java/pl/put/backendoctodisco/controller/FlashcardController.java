@@ -60,7 +60,7 @@ public class FlashcardController {
                 .filter(card ->
                         card.getWord().equals(flashcardRequest.word)
                         && card.getLanguage().equals(flashcardRequest.language)
-                        && card.getTranslation().equals(flashcardRequest.translation)  //same flashcards
+//                        && card.getTranslation().equals(flashcardRequest.translation)  //same flashcards
                 ).toList();
 
         if(!filteredFlashcards.isEmpty()){

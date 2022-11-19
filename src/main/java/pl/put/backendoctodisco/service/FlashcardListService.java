@@ -42,4 +42,8 @@ public class FlashcardListService {
         return contentRepository.findCardInList(flashcardListContent.getFlashcardId(), flashcardListContent.getListId()).stream().findFirst();
     }
 
+    public Optional<FlashcardListInfo> findListById(Long id){
+        return infoRepository.findById(id).stream().findFirst();
+    }
+
 }

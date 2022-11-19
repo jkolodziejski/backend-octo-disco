@@ -15,4 +15,6 @@ public interface FlashcardListInfoRepository extends JpaRepository<FlashcardList
     List<FlashcardListInfo> findByName(Long userId, String name);
 
     List<FlashcardListInfo> findByName(String name);
+
+    List<FlashcardListInfo> findById(Long id);
 }

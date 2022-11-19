@@ -30,8 +30,11 @@ public class FlashcardService {
     }
 
     public List<Flashcard> findByWord(String word) {
-        List<Flashcard> flashcards = repository.findByWord(word);
-        return flashcards;
+        return repository.findByWord(word);
+    }
+
+    public Optional<Flashcard> findById(Long id) {
+        return repository.findById(id).stream().findFirst();
     }
 
 }

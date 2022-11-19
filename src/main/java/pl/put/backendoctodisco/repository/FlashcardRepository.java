@@ -13,4 +13,7 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
 
     List<Flashcard> findByWord(String word);
 
+    List<Flashcard> findById(Long id);
+
+
 }
