@@ -19,4 +19,7 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
 
     Page<Flashcard> findFlashcardByIsGlobalFalseAndUserId(Long userId, Pageable pageable);
 
+    List<Flashcard> findById(Long id);
+
+
 }

@@ -8,6 +8,7 @@ import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -26,6 +27,10 @@ public class FlashcardService {
     public List<Flashcard> getAllFlashcards(Pageable pageable){
         Page<Flashcard> page =repository.findAll(pageable);
         return   page.getContent();
+    }
+
+    public Optional<Flashcard> findById(Long id) {
+        return repository.findById(id).stream().findFirst();
     }
 
     public List<Flashcard> findByWord(String word) {
