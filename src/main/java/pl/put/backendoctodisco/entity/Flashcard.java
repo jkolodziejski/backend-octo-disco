@@ -9,8 +9,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
 @ToString
 @RequiredArgsConstructor
 @Data
@@ -41,10 +39,12 @@ public class Flashcard {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+
+
     public Flashcard(User user, FlashcardRequest request){
         language = request.language;
         word = request.word;
-//        translation = request.translation;
+        //translation = request.translation;
         isGlobal = false;
         userId = user.getId();
     }

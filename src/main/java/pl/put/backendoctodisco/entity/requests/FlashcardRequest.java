@@ -1,6 +1,7 @@
 package pl.put.backendoctodisco.entity.requests;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.NonNull;
 
 import javax.persistence.Column;
 
@@ -13,7 +14,7 @@ public class FlashcardRequest {
     @Column(name = "word", nullable = false)
     public String word;
 
-//    @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
-//    @Column(name = "translation", nullable = false)
-//    public String translation;
+    @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
+    @Column(name = "translation", nullable = false)
+    public String translation;
 }

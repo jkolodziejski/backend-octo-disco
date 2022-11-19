@@ -33,4 +33,11 @@ CREATE TABLE flashcard_list_content(
 
 ALTER TABLE WORD ADD CONSTRAINT chk_language CHECK(language in ('en', 'pl'));
 
+CREATE TABLE ALIAS(
+                      id int AUTO_INCREMENT PRIMARY KEY,
+                      word_id int,
+                      alias varchar(100),
+                      CONSTRAINT fk_alias FOREIGN KEY(word_id) references flashcard(id)
+);
+
 
