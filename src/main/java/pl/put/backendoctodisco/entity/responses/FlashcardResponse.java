@@ -19,13 +19,13 @@ public class FlashcardResponse {
     @ApiModelProperty(notes = "Word to learn", example = "Poland", required = true)
     private final String word;
 
-
     @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0", required = true)
     private final Boolean isGlobal;
 
     @ApiModelProperty(notes = "ID of the user who created the flashcard", example = "1", required = true)
     private final Long userId;
 
+    @ApiModelProperty(notes = "All translations of the word", example = "polska", required = true)
     private final List<String> alias;
 
 
