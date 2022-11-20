@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
+import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardListInfoRepository;
@@ -44,6 +45,10 @@ public class FlashcardListService {
 
     public Optional<FlashcardListInfo> findListById(Long id){
         return infoRepository.findById(id).stream().findFirst();
+    }
+
+    public List<FlashcardListInfo> findUsersLists(User user){
+        return infoRepository.findByUserId(user.getId());
     }
 
 }

@@ -107,7 +107,7 @@ public class FlashcardListController {
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Successfully added to the list"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)"),
+            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)")
     })
     @PostMapping("/add_cards")
     private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyInListException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, FlashcardNotAvailableException {
@@ -141,5 +141,23 @@ public class FlashcardListController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get users lists of flashcards",
+            notes = "Returns info about users flashcard lists")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully found users lists"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @GetMapping("/get")
+    private ResponseEntity<ArrayList<FlashcardListInfo>> getFlashcardLists(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyInListException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, FlashcardNotAvailableException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        ArrayList<FlashcardListInfo> response = new ArrayList<>(flashcardListService.findUsersLists(foundUser));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
