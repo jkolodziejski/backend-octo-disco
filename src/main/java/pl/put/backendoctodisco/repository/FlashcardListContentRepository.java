@@ -13,4 +13,6 @@ public interface FlashcardListContentRepository extends JpaRepository<FlashcardL
 
     @Query(value = "SELECT * FROM flashcard_list_content l WHERE l.flashcard_id = ?1 AND l.list_id = ?2", nativeQuery = true)
     List<FlashcardListContent> findCardInList(Long flashcardId, Long listId);
+
+    List<FlashcardListContent> findByListId(Long listId);
 }
