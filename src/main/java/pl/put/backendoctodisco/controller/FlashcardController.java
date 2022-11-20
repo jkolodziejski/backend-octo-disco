@@ -107,6 +107,19 @@ public class FlashcardController {
         return  new ResponseEntity<>(getListFlashcardsWithAlias(flashcardList), HttpStatus.OK);
     }
 
+
+    @GetMapping("/search")
+    private ResponseEntity<List<Flashcard>> getFlashcardsByKeyWord(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable , String keyword) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+
+        return new ResponseEntity<>(flashcardService.getFlashcardsByKyeword(pageable,keyword), HttpStatus.OK);
+
+
+
+    }
+
+
     private FlashcardResponse getFlashcardWithAlias(Flashcard flashcard){
             List<String> foundedAlias = aliasService.findAliasbyWordId(flashcard.getId());
         return new FlashcardResponse(flashcard,foundedAlias);

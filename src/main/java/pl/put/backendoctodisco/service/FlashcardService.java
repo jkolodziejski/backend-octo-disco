@@ -47,4 +47,11 @@ public class FlashcardService {
         return  page.getContent();
     }
 
+
+    public List<Flashcard> getFlashcardsByKyeword(Pageable pageable,String keyword){
+        return repository.findAllUsersWithPagination(pageable,keyword).getContent();
+
+    }
+
+
 }
