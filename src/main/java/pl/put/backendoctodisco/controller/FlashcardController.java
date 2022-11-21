@@ -83,13 +83,13 @@ public class FlashcardController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get flashcards from database by page with all alias",
+    @ApiOperation(value = "Get flashcards from database with all alias paged",
             notes = "Returns list of flashcard, alias and size")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The resource has been fetched and transmitted in the message body"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
-    @GetMapping("/pages")
+    @GetMapping("/all")
     private ResponseEntity<Map<String, Object> > getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Choice choice, @PageableDefault(value = 25) Pageable pageable ) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
@@ -107,13 +107,19 @@ public class FlashcardController {
         return  new ResponseEntity<>(getListFlashcardsWithAlias(flashcardList), HttpStatus.OK);
     }
 
-
-    @GetMapping("/search")
-    private ResponseEntity<List<Flashcard>> getFlashcardsByKeyWord(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable , String keyword) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException {
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get flashcards from database by keyword with all alias paged",
+            notes = "Returns list of flashcard, alias and size")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
+            @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
+    })
+    @GetMapping("/keyword")
+    private ResponseEntity<Map<String,Object>> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable , String keyword) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
-
-        return new ResponseEntity<>(flashcardService.getFlashcardsByKyeword(pageable,keyword), HttpStatus.OK);
+        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKyeword(pageable,keyword)), HttpStatus.OK);
 
 
 
