@@ -69,13 +69,13 @@ public class FlashcardController {
                         && card.getLanguage().equals(flashcardRequest.language) //same flashcards 
                 ).toList();
         if(filteredFlashcards.size() == 1){
-            checkAndcreateAlias(filteredFlashcards.get(0).getId(),flashcardRequest.translation);
-            flashcardResponse = getFlashcardWithAlias(filteredFlashcards.get(0));
+            aliasService.checkAndcreateAlias(filteredFlashcards.get(0).getId(),flashcardRequest.translation);
+            flashcardResponse = aliasService.getFlashcardWithAlias(filteredFlashcards.get(0));
         }
         else{
             Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
             aliasService.createAlias(new Alias(flashcardRequest.translation, createdFlashcard.getId()));
-            flashcardResponse = getFlashcardWithAlias(createdFlashcard);
+            flashcardResponse = aliasService.getFlashcardWithAlias(createdFlashcard);
         }
         return new ResponseEntity<>(flashcardResponse , HttpStatus.CREATED);
     }
@@ -120,15 +120,6 @@ public class FlashcardController {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKyeword(pageable,keyword)), HttpStatus.OK);
-
-
-
-    }
-
-
-    private FlashcardResponse getFlashcardWithAlias(Flashcard flashcard){
-            List<String> foundedAlias = aliasService.findAliasbyWordId(flashcard.getId());
-        return new FlashcardResponse(flashcard,foundedAlias);
     }
 
     private Map<String, Object> getListFlashcardsWithAlias(List<Flashcard> flashcards){
@@ -140,18 +131,5 @@ public class FlashcardController {
         }
 
         return new AllFlashcardsResponse(flashcardListWithAlias).generateResponse();
-    }
-
-
-    private void checkAndcreateAlias(Long word_id, String word) throws AliasAlreadyExistsException {
-        List <Alias>  foundAlias = aliasService.findByWordId(word_id);
-        List <Alias> filteredAlias = foundAlias
-                .stream().filter(alias ->
-                        alias.getAlias().equals(word))
-                .toList();
-        if(!filteredAlias.isEmpty()){
-            throw new AliasAlreadyExistsException();
-        }
-        aliasService.createAlias(new Alias(word,word_id));
     }
 }
