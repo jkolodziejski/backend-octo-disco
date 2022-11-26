@@ -4,6 +4,7 @@ package pl.put.backendoctodisco.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -93,7 +94,7 @@ public class FlashcardController {
     private ResponseEntity<Map<String, Object> > getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Choice choice, @PageableDefault(value = 25) Pageable pageable ) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
-        List<Flashcard> flashcardList ;
+        Page<Flashcard> flashcardList ;
         if(choice.equals(Choice.Global)){
             flashcardList =  flashcardService.getAllFlashcardsGlobal(pageable);
         }
@@ -116,20 +117,21 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
     })
     @GetMapping("/keyword")
-    private ResponseEntity<Map<String,Object>> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable , String keyword) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException {
+    private ResponseEntity<Map<String,Object>> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 1) Pageable pageable , String keyword) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKyeword(pageable,keyword)), HttpStatus.OK);
     }
 
-    private Map<String, Object> getListFlashcardsWithAlias(List<Flashcard> flashcards){
+    private Map<String, Object> getListFlashcardsWithAlias(Page<Flashcard> flashcards){
         List<FlashcardResponse> flashcardListWithAlias = new ArrayList<>();
-        for ( Flashcard flashcard : flashcards ) {
+        List<Flashcard> listFlashcards = flashcards.getContent();
+        for ( Flashcard flashcard : listFlashcards ) {
             List<String> foundedAlias = aliasService.findAliasbyWordId(flashcard.getId());
             FlashcardResponse flashcardResponse = new FlashcardResponse(flashcard,foundedAlias);
             flashcardListWithAlias.add(flashcardResponse);
         }
 
-        return new AllFlashcardsResponse(flashcardListWithAlias).generateResponse();
+        return new AllFlashcardsResponse(flashcardListWithAlias,flashcards).generateResponse();
     }
 }
