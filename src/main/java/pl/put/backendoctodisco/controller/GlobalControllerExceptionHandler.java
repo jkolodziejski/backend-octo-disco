@@ -3,7 +3,7 @@ package pl.put.backendoctodisco.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.put.backendoctodisco.exceptions.*;
+import pl.put.backendoctodisco.exceptions.ExceptionResponse;
 import pl.put.backendoctodisco.utils.ApiError;
 
 

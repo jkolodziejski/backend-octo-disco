@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.put.backendoctodisco.entity.User;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @Repository

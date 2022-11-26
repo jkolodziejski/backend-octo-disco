@@ -6,14 +6,13 @@ import lombok.ToString;
 import org.springframework.data.domain.Page;
 import pl.put.backendoctodisco.entity.Flashcard;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @ToString
-public class AllFlashcardsResponse  {
+public class AllFlashcardsResponse {
 
     @ApiModelProperty(notes = "Metadata of Response ")
     private final Metadata metadata;
@@ -22,27 +21,25 @@ public class AllFlashcardsResponse  {
     private final List<FlashcardResponse> flashcards;
 
 
-
-    public AllFlashcardsResponse(List<FlashcardResponse> flashcards){
-        this.metadata = new Metadata(flashcards.size(),1);
+    public AllFlashcardsResponse(List<FlashcardResponse> flashcards) {
+        this.metadata = new Metadata(flashcards.size(), 1);
         this.flashcards = flashcards;
 
     }
 
     public AllFlashcardsResponse(List<FlashcardResponse> flashcards, Page<Flashcard> page) {
-        this.metadata = new Metadata(page.getNumberOfElements(),page.getTotalPages());
+        this.metadata = new Metadata(page.getNumberOfElements(), page.getTotalPages());
         this.flashcards = flashcards;
-
 
 
     }
 
 
-    public Map<String, Object>  generateResponse(){
-        Map<String, Object> map  = new HashMap<>();
-        map.put("flashcards",flashcards);
-        map.put("Metadate",metadata);
-        return  map;
+    public Map<String, Object> generateResponse() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("flashcards", flashcards);
+        map.put("Metadate", metadata);
+        return map;
     }
 
 

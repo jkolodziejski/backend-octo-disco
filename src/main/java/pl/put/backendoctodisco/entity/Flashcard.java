@@ -1,7 +1,9 @@
 package pl.put.backendoctodisco.entity;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 
@@ -40,8 +42,7 @@ public class Flashcard {
     private Long userId;
 
 
-
-    public Flashcard(User user, FlashcardRequest request){
+    public Flashcard(User user, FlashcardRequest request) {
         language = request.language;
         word = request.word;
         //translation = request.translation;
