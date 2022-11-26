@@ -36,17 +36,17 @@ public class FlashcardService {
         return  repository.findByWord(word);
     }
 
-    public Page<Flashcard> getAllFlashcardsGlobal(Pageable pageable){
-        return repository.findFlashcardByIsGlobalTrue(pageable);
+    public Page<Flashcard> getAllFlashcardsGlobal(Pageable pageable,String language){
+        return repository.findFlashcardByIsGlobalTrueAndLanguage(pageable,language);
     }
 
-    public Page<Flashcard> getFlashcardsUser(Long user_id, Pageable pageable){
-        return  repository.findFlashcardByIsGlobalFalseAndUserId(user_id,pageable);
+    public Page<Flashcard> getFlashcardsUser(Long user_id, Pageable pageable, String language){
+        return  repository.findFlashcardByIsGlobalFalseAndUserIdAndLanguage(user_id,pageable,language );
     }
 
 
-    public Page<Flashcard> getFlashcardsByKyeword(Pageable pageable,String keyword){
-        return repository.findAllUsersWithPagination(pageable,keyword);
+    public Page<Flashcard> getFlashcardsByKyeword(Pageable pageable,String keyword, String language){
+        return repository.findAllUsersWithPagination(pageable,keyword, language);
 
     }
 
