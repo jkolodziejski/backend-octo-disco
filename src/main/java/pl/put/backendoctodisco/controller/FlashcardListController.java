@@ -72,8 +72,8 @@ public class FlashcardListController {
             notes = "Returns ID's of both flashcard and list (and the connection entity ID as well).")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Successfully added to the list"),
+            @ApiResponse(code = 400, message = "Flashcard or list not found (error specified in the message)"),
             @ApiResponse(code = 403, message = "Token not found, token expired or user not authorized for the operation (error specified in the message)"),
-            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)"),
             @ApiResponse(code = 409, message = "Flashcard is already present in the list.")
     })
     @PostMapping("/add_card")
@@ -110,8 +110,8 @@ public class FlashcardListController {
             notes = "Returns ID's of both flashcard and list (and the connection entity ID as well) of every request that was approved.")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Successfully added to the list"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)")
+            @ApiResponse(code = 400, message = "Flashcard or list not found (error specified in the message)"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/add_cards")
     private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, FlashcardNotAvailableException {
@@ -185,8 +185,6 @@ public class FlashcardListController {
             return new FlashcardResponse(it, foundAlias);
         }).toList();
         AllFlashcardsResponse response = new AllFlashcardsResponse(flashcardsResponse);
-
-
 
         return response.generateResponse();
     }

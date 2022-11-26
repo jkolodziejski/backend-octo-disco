@@ -27,7 +27,6 @@ import pl.put.backendoctodisco.utils.Language;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -54,7 +53,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
     })
     @PostMapping("/create")
-    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, AliasAlreadyExistsException {
+    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
         User foundUser = userService.findUserByAuthToken(authToken);
         FlashcardResponse flashcardResponse;
         AuthToken.validateToken(foundUser);
@@ -62,14 +61,8 @@ public class FlashcardController {
             throw new NonexistentLanguageException();
         }
 
-        List <Flashcard> foundFlashcards = flashcardService.findByWord(flashcardRequest.word);
-        List <Flashcard> filteredFlashcards = foundFlashcards
-                .stream().filter(card -> card.getIsGlobal() || Objects.equals(card.getUserId(), foundUser.getId())) //users dictionary
-                .filter(card ->
-                        card.getWord().equals(flashcardRequest.word)
-                        && card.getLanguage().equals(flashcardRequest.language) //same flashcards 
-                ).toList();
-        if(filteredFlashcards.size() == 1){
+        List <Flashcard> filteredFlashcards = flashcardService.findInUsersDictionary(foundUser, flashcardRequest);
+        if(!filteredFlashcards.isEmpty()){
             aliasService.checkAndcreateAlias(filteredFlashcards.get(0).getId(),flashcardRequest.translation);
             flashcardResponse = aliasService.getFlashcardWithAlias(filteredFlashcards.get(0));
         }
@@ -90,6 +83,7 @@ public class FlashcardController {
             notes = "Returns list of flashcard, alias and size")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The resource has been fetched and transmitted in the message body"),
+            @ApiResponse(code = 400, message = "Wrong request"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/all")
@@ -107,10 +101,10 @@ public class FlashcardController {
         }
 
         Page<Flashcard> flashcardList ;
-        if(Choice.valueOf(choice).equals(Choice.global)){
+        if(Choice.valueOf(choice).equals(Choice.GLOBAL)){
             flashcardList =  flashcardService.getAllFlashcardsGlobal(pageable,language);
         }
-        else if(Choice.valueOf(choice).equals(Choice.local)) {
+        else if(Choice.valueOf(choice).equals(Choice.LOCAL)) {
             flashcardList = flashcardService.getFlashcardsUser(foundUser.getId(),pageable,language);
         }
         else {
@@ -138,7 +132,7 @@ public class FlashcardController {
         if(!Language.contains(language)){
             throw new NonexistentLanguageException();
         }
-        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKyeword(pageable,keyword,language)), HttpStatus.OK);
+        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKeyword(pageable,keyword,language)), HttpStatus.OK);
     }
 
     private AllFlashcardsResponse getListFlashcardsWithAlias(Page<Flashcard> flashcards){

@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 
 @ApiModel
 public enum Choice {
-    global, both, local;
+    GLOBAL, BOTH, LOCAL;
 
     public static boolean contains(String choice){
         for (Choice cho : Choice.values()) {

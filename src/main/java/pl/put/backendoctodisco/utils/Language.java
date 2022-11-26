@@ -1,7 +1,5 @@
 package pl.put.backendoctodisco.utils;
 
-import java.util.Locale;
-
 public enum Language {
     EN;
 

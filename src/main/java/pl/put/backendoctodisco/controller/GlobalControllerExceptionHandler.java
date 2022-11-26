@@ -11,7 +11,7 @@ import pl.put.backendoctodisco.utils.ApiError;
 class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(ExceptionResponse.class)
-    public ResponseEntity<ApiError> userNotFoundException(ExceptionResponse ex) {
-        return new ResponseEntity<>(ex.error, ex.error.status());
+    public ResponseEntity<ApiError> defaultException(ExceptionResponse exception) {
+        return new ResponseEntity<>(exception.error, exception.error.status());
     }
 }

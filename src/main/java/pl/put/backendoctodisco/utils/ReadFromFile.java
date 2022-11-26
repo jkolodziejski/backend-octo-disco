@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.put.backendoctodisco.ConfigProperties;
 
+//TODO is this needed?
 @Component
 public class ReadFromFile {
 
@@ -13,7 +14,5 @@ public class ReadFromFile {
     public ReadFromFile(ConfigProperties configProperties) {
         this.configProperties = configProperties;
     }
-
-
 
 }
