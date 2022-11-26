@@ -22,11 +22,11 @@ import pl.put.backendoctodisco.service.AliasService;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
+import pl.put.backendoctodisco.utils.Choice;
 import pl.put.backendoctodisco.utils.Language;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -93,17 +93,24 @@ public class FlashcardController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/all")
-    private ResponseEntity<Map<String, Object> > getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Choice choice, @PageableDefault(value = 25) Pageable pageable , String language) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<AllFlashcardsResponse > getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, String choice, @PageableDefault(value = 25) Pageable pageable , String language) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, NonexistentLanguageException, NonexistentChoiceException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if(language == null || choice == null){
             throw new ParameterIsMissingException();
         }
+        if(!Choice.contains(choice)){
+            throw new NonexistentChoiceException();
+        }
+        if(!Language.contains(language)){
+            throw new NonexistentLanguageException();
+        }
+
         Page<Flashcard> flashcardList ;
-        if(choice.equals(Choice.Global)){
+        if(Choice.valueOf(choice).equals(Choice.global)){
             flashcardList =  flashcardService.getAllFlashcardsGlobal(pageable,language);
         }
-        else if(choice.equals(Choice.Local)) {
+        else if(Choice.valueOf(choice).equals(Choice.local)) {
             flashcardList = flashcardService.getFlashcardsUser(foundUser.getId(),pageable,language);
         }
         else {
@@ -122,16 +129,19 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
     })
     @GetMapping("/keyword")
-    private ResponseEntity<Map<String,Object>> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 1) Pageable pageable , String keyword,String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException {
+    private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable , String keyword,String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if(language == null || keyword == null){
             throw new ParameterIsMissingException();
         }
+        if(!Language.contains(language)){
+            throw new NonexistentLanguageException();
+        }
         return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKyeword(pageable,keyword,language)), HttpStatus.OK);
     }
 
-    private Map<String, Object> getListFlashcardsWithAlias(Page<Flashcard> flashcards){
+    private AllFlashcardsResponse getListFlashcardsWithAlias(Page<Flashcard> flashcards){
         List<FlashcardResponse> flashcardListWithAlias = new ArrayList<>();
         List<Flashcard> listFlashcards = flashcards.getContent();
         for ( Flashcard flashcard : listFlashcards ) {
@@ -140,6 +150,6 @@ public class FlashcardController {
             flashcardListWithAlias.add(flashcardResponse);
         }
 
-        return new AllFlashcardsResponse(flashcardListWithAlias,flashcards).generateResponse();
+        return new AllFlashcardsResponse(flashcardListWithAlias,flashcards);
     }
 }

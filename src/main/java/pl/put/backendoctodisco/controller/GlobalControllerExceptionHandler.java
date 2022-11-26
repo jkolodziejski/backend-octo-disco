@@ -74,4 +74,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> parametersIsMissingException(ParameterIsMissingException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(NonexistentChoiceException.class)
+    public ResponseEntity<ApiError> parametersIsMissingException(NonexistentChoiceException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }
