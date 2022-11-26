@@ -69,4 +69,14 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<ApiError> flashcardAlreadyInListException(FlashcardAlreadyInListException ex) {
         return new ResponseEntity<>(ex.error, ex.error.status());
     }
+
+    @ExceptionHandler(ParameterIsMissingException.class)
+    public ResponseEntity<ApiError> parametersIsMissingException(ParameterIsMissingException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
+
+    @ExceptionHandler(NonexistentChoiceException.class)
+    public ResponseEntity<ApiError> parametersIsMissingException(NonexistentChoiceException ex) {
+        return new ResponseEntity<>(ex.error, ex.error.status());
+    }
 }
