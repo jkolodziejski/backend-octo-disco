@@ -45,7 +45,7 @@ public class FlashcardListController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Add a new flashcard list to database",
-                    notes = "Returns the created flashcard list")
+            notes = "Returns the created flashcard list")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
@@ -59,7 +59,7 @@ public class FlashcardListController {
 
         Optional<FlashcardListInfo> foundFlashcardList = flashcardListService.findByName(foundUser.getId(), flashcardListRequest.name);
 
-        if(foundFlashcardList.isPresent()){
+        if (foundFlashcardList.isPresent()) {
             throw new FlashcardListAlreadyExistsException();
         }
 
@@ -72,8 +72,8 @@ public class FlashcardListController {
             notes = "Returns ID's of both flashcard and list (and the connection entity ID as well).")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Successfully added to the list"),
+            @ApiResponse(code = 400, message = "Flashcard or list not found (error specified in the message)"),
             @ApiResponse(code = 403, message = "Token not found, token expired or user not authorized for the operation (error specified in the message)"),
-            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)"),
             @ApiResponse(code = 409, message = "Flashcard is already present in the list.")
     })
     @PostMapping("/add_card")
@@ -82,14 +82,14 @@ public class FlashcardListController {
 
         AuthToken.validateToken(foundUser);
 
-        if(flashcardListService.findListById(addToFlashcardListRequest.list_id).isEmpty()){
+        if (flashcardListService.findListById(addToFlashcardListRequest.list_id).isEmpty()) {
             throw new FlashcardListDoesNotExistException();
         }
         Optional<Flashcard> foundFlashcard = flashcardService.findById(addToFlashcardListRequest.flashcard_id);
-        if(foundFlashcard.isEmpty()){
+        if (foundFlashcard.isEmpty()) {
             throw new FlashcardDoesNotExistException();
-        }else{
-            if(!foundFlashcard.get().getIsGlobal() && !Objects.equals(foundFlashcard.get().getUserId(), foundUser.getId())){
+        } else {
+            if (!foundFlashcard.get().getIsGlobal() && !Objects.equals(foundFlashcard.get().getUserId(), foundUser.getId())) {
                 throw new FlashcardNotAvailableException();
             }
         }
@@ -97,7 +97,7 @@ public class FlashcardListController {
         FlashcardListContent flashcardListContent = new FlashcardListContent(addToFlashcardListRequest);
         Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
-        if(foundFlashcardListContent.isPresent()){
+        if (foundFlashcardListContent.isPresent()) {
             throw new FlashcardAlreadyInListException();
         }
 
@@ -110,8 +110,8 @@ public class FlashcardListController {
             notes = "Returns ID's of both flashcard and list (and the connection entity ID as well) of every request that was approved.")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Successfully added to the list"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 404, message = "Flashcard or list not found (error specified in the message)")
+            @ApiResponse(code = 400, message = "Flashcard or list not found (error specified in the message)"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/add_cards")
     private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, FlashcardNotAvailableException {
@@ -121,25 +121,25 @@ public class FlashcardListController {
 
         ArrayList<FlashcardListContent> response = new ArrayList<>();
 
-        for(AddToFlashcardListRequest req : addToFlashcardListRequest.flashcards_requests){
+        for (AddToFlashcardListRequest req : addToFlashcardListRequest.flashcards_requests) {
 
             FlashcardListContent flashcardListContent = new FlashcardListContent(req);
             Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
             //TODO not sure about the exceptions there
-            if(flashcardListService.findListById(req.list_id).isEmpty()){
+            if (flashcardListService.findListById(req.list_id).isEmpty()) {
                 throw new FlashcardListDoesNotExistException();
             }
             Optional<Flashcard> foundFlashcard = flashcardService.findById(req.flashcard_id);
-            if(foundFlashcard.isEmpty()){
+            if (foundFlashcard.isEmpty()) {
                 throw new FlashcardDoesNotExistException();
-            }else{
-                if(!foundFlashcard.get().getIsGlobal() && !Objects.equals(foundFlashcard.get().getUserId(), foundUser.getId())){
+            } else {
+                if (!foundFlashcard.get().getIsGlobal() && !Objects.equals(foundFlashcard.get().getUserId(), foundUser.getId())) {
                     throw new FlashcardNotAvailableException();
                 }
             }
 
-            if(foundFlashcardListContent.isEmpty()){
+            if (foundFlashcardListContent.isEmpty()) {
                 response.add(flashcardListService.addToFlashcardList(flashcardListContent));
             }
         }
@@ -155,7 +155,7 @@ public class FlashcardListController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/get_lists")
-    private ResponseEntity<ArrayList<FlashcardListInfo>> getFlashcardLists(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException{
+    private ResponseEntity<ArrayList<FlashcardListInfo>> getFlashcardLists(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -185,8 +185,6 @@ public class FlashcardListController {
             return new FlashcardResponse(it, foundAlias);
         }).toList();
         AllFlashcardsResponse response = new AllFlashcardsResponse(flashcardsResponse);
-
-
 
         return response.generateResponse();
     }

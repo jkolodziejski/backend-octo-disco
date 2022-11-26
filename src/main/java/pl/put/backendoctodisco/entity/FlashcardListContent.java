@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
-import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 
 import javax.persistence.*;
 
@@ -25,7 +24,7 @@ public class FlashcardListContent {
     @Column(name = "list_id", nullable = true)
     private Long listId;
 
-    public FlashcardListContent(AddToFlashcardListRequest request){
+    public FlashcardListContent(AddToFlashcardListRequest request) {
         flashcardId = request.flashcard_id;
         listId = request.list_id;
     }

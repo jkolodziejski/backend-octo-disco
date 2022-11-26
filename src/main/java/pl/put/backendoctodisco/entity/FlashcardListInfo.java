@@ -25,7 +25,7 @@ public class FlashcardListInfo {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public FlashcardListInfo(User user, FlashcardListRequest flashcardListRequest){
+    public FlashcardListInfo(User user, FlashcardListRequest flashcardListRequest) {
         this.userId = user.getId();
         this.name = flashcardListRequest.name;
     }

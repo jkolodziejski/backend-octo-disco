@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "flashcard")
-        public class ConfigProperties {
+public class ConfigProperties {
 
     private String fileFolderUrl;
 }

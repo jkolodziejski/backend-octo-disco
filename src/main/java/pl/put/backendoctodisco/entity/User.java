@@ -34,7 +34,7 @@ public class User {
     @Column(name = "auth_token")
     private String authToken;
 
-    public User(RegisterRequest registerRequest){
+    public User(RegisterRequest registerRequest) {
         this.login = registerRequest.login;
         this.email = registerRequest.email;
         this.password = registerRequest.password;

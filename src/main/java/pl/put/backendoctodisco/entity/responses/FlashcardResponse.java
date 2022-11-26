@@ -1,7 +1,8 @@
 package pl.put.backendoctodisco.entity.responses;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 import pl.put.backendoctodisco.entity.Flashcard;
 
 import java.util.List;

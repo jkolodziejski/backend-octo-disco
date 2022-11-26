@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
 import pl.put.backendoctodisco.entity.User;
-import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardListInfoRepository;
 
@@ -23,7 +22,7 @@ public class FlashcardListService {
         this.contentRepository = contentRepository;
     }
 
-    public FlashcardListInfo createFlashcardList(FlashcardListInfo flashcardListInfo){
+    public FlashcardListInfo createFlashcardList(FlashcardListInfo flashcardListInfo) {
         return infoRepository.save(flashcardListInfo);
     }
 
@@ -35,23 +34,23 @@ public class FlashcardListService {
         return infoRepository.findByName(name);
     }
 
-    public FlashcardListContent addToFlashcardList(FlashcardListContent flashcardListContent){
+    public FlashcardListContent addToFlashcardList(FlashcardListContent flashcardListContent) {
         return contentRepository.save(flashcardListContent);
     }
 
-    public Optional<FlashcardListContent> findCardInList(FlashcardListContent flashcardListContent){
+    public Optional<FlashcardListContent> findCardInList(FlashcardListContent flashcardListContent) {
         return contentRepository.findCardInList(flashcardListContent.getFlashcardId(), flashcardListContent.getListId()).stream().findFirst();
     }
 
-    public Optional<FlashcardListInfo> findListById(Long id){
+    public Optional<FlashcardListInfo> findListById(Long id) {
         return infoRepository.findById(id).stream().findFirst();
     }
 
-    public List<FlashcardListInfo> findUsersLists(User user){
+    public List<FlashcardListInfo> findUsersLists(User user) {
         return infoRepository.findByUserId(user.getId());
     }
 
-    public List<FlashcardListContent> findFlashcardsInList(Long listId){
+    public List<FlashcardListContent> findFlashcardsInList(Long listId) {
         return contentRepository.findByListId(listId);
     }
 

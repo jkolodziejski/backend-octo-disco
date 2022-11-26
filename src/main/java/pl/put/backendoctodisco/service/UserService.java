@@ -26,10 +26,10 @@ public class UserService {
     public User createUser(User user) throws UserLoginAlreadyExistsException, UserEmailAlreadyExistsException {
         List<User> usersByLogin = repository.findByLogin(user.getLogin());
         List<User> usersByEmail = repository.findByEmail(user.getEmail());
-        if(!usersByLogin.isEmpty()){
+        if (!usersByLogin.isEmpty()) {
             throw new UserLoginAlreadyExistsException();
         }
-        if(!usersByEmail.isEmpty()){
+        if (!usersByEmail.isEmpty()) {
             throw new UserEmailAlreadyExistsException();
         }
         return repository.save(user);
@@ -48,7 +48,7 @@ public class UserService {
 
     public User findUserByAuthToken(String authToken) throws TokenNotFoundException {
         Optional<User> userToCheck = repository.findByAuthToken(authToken).stream().findFirst();
-        if(userToCheck.isEmpty()){
+        if (userToCheck.isEmpty()) {
             throw new TokenNotFoundException();
         }
 

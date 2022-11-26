@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.entity.User;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
 
     Page<Flashcard> findFlashcardByIsGlobalTrueAndLanguage(Pageable pageable, String language);
 
-    Page<Flashcard> findFlashcardByIsGlobalFalseAndUserIdAndLanguage (Long userId, Pageable pageable, String language);
+    Page<Flashcard> findFlashcardByIsGlobalFalseAndUserIdAndLanguage(Long userId, Pageable pageable, String language);
 
     List<Flashcard> findById(Long id);
 

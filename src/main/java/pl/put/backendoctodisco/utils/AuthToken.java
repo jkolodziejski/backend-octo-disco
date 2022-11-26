@@ -1,7 +1,5 @@
 package pl.put.backendoctodisco.utils;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -10,21 +8,15 @@ import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.exceptions.TokenExpiredException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
 import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
-import pl.put.backendoctodisco.repository.UserRepository;
-import pl.put.backendoctodisco.service.UserService;
 
 import javax.crypto.SecretKey;
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Signature;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.function.Function;
 
 
 public class AuthToken {
@@ -34,7 +26,7 @@ public class AuthToken {
 
     private String token;
 
-    public AuthToken(String token){
+    public AuthToken(String token) {
         this.token = token;
     }
 
@@ -55,10 +47,6 @@ public class AuthToken {
                 .compact();
     }
 
-    public boolean isEmpty(){
-        return token.isEmpty();
-    }
-
     public static State validateToken(User user) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         State currentState = new AuthToken(user.getAuthToken()).validateSignature();
         switch (currentState) {
@@ -71,16 +59,29 @@ public class AuthToken {
         }
     }
 
-    public State validateSignature(){
+    static private SecretKey getSecretKey() {
+        try {
+            String unhashedKey = Files.readAllLines(Paths.get("authorization.key")).get(0);
+            return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isEmpty() {
+        return token.isEmpty();
+    }
+
+    public State validateSignature() {
         try {
             Jwts.parser()
                     .setSigningKey(getSecretKey())
                     .parseClaimsJws(token).getBody();
-        } catch(ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             return State.EXPIRED;
-        } catch(SignatureException e) {
+        } catch (SignatureException e) {
             return State.UNAUTHORIZED;
-        } catch(Exception e){
+        } catch (Exception e) {
             return State.FAULTY;
         }
         return State.ACTIVE_USER;
@@ -91,16 +92,7 @@ public class AuthToken {
         return token;
     }
 
-    static private SecretKey getSecretKey(){
-        try {
-            String unhashedKey = Files.readAllLines(Paths.get("authorization.key")).get(0);
-            return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String encode(int part){
+    private String encode(int part) {
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String src = this.token;
         String[] parts = src.split("\\.");
