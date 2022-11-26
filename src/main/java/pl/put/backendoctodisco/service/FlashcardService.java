@@ -24,9 +24,8 @@ public class FlashcardService {
         return repository.save(flashcard);
     }
 
-    public List<Flashcard> getAllFlashcards(Pageable pageable){
-        Page<Flashcard> page =repository.findAll(pageable);
-        return   page.getContent();
+    public Page<Flashcard> getAllFlashcards(Pageable pageable){
+        return   repository.findAll(pageable);
     }
 
     public Optional<Flashcard> findById(Long id) {
@@ -37,19 +36,17 @@ public class FlashcardService {
         return  repository.findByWord(word);
     }
 
-    public List<Flashcard> getAllFlashcardsGlobal(Pageable pageable){
-        Page<Flashcard> page = repository.findFlashcardByIsGlobalTrue(pageable);
-        return page.getContent();
+    public Page<Flashcard> getAllFlashcardsGlobal(Pageable pageable){
+        return repository.findFlashcardByIsGlobalTrue(pageable);
     }
 
-    public List<Flashcard> getFlashcardsUser(Long user_id, Pageable pageable){
-        Page<Flashcard> page = repository.findFlashcardByIsGlobalFalseAndUserId(user_id,pageable);
-        return  page.getContent();
+    public Page<Flashcard> getFlashcardsUser(Long user_id, Pageable pageable){
+        return  repository.findFlashcardByIsGlobalFalseAndUserId(user_id,pageable);
     }
 
 
-    public List<Flashcard> getFlashcardsByKyeword(Pageable pageable,String keyword){
-        return repository.findAllUsersWithPagination(pageable,keyword).getContent();
+    public Page<Flashcard> getFlashcardsByKyeword(Pageable pageable,String keyword){
+        return repository.findAllUsersWithPagination(pageable,keyword);
 
     }
 
