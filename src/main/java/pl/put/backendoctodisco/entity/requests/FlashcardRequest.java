@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.NonNull;
 
 import javax.persistence.Column;
+import java.util.List;
 
 public class FlashcardRequest {
     @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "pl", required = true)
@@ -16,5 +17,5 @@ public class FlashcardRequest {
 
     @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
     @Column(name = "translation", nullable = false)
-    public String translation;
+    public List<String> translation;
 }

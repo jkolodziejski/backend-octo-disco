@@ -43,16 +43,19 @@ public class AliasService {
         return new FlashcardResponse(flashcard,foundedAlias);
     }
 
-    public void checkAndcreateAlias(Long word_id, String word) throws AliasAlreadyExistsException {
+    public void checkAndcreateAlias(Long word_id, List<String> aliases) throws AliasAlreadyExistsException {
         List <Alias>  foundAlias = findByWordId(word_id);
-        List <Alias> filteredAlias = foundAlias
-                .stream().filter(alias ->
-                        alias.getAlias().equals(word))
-                .toList();
-        if(!filteredAlias.isEmpty()){
-            throw new AliasAlreadyExistsException();
+        for (String aliasReq : aliases) {
+            List<Alias> filteredAlias = foundAlias
+                    .stream().filter(alias ->
+                            alias.getAlias().equals(aliasReq))
+                    .toList();
+            if (!filteredAlias.isEmpty()) {
+                throw new AliasAlreadyExistsException();
+            }
+            createAlias(new Alias(aliasReq,word_id));
         }
-        createAlias(new Alias(word,word_id));
+
     }
 
 }
