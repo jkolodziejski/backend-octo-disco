@@ -75,7 +75,9 @@ public class FlashcardController {
         }
         else{
             Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
-            aliasService.createAlias(new Alias(flashcardRequest.translation, createdFlashcard.getId()));
+            for (String aliasRest : flashcardRequest.translation){
+                aliasService.createAlias(new Alias(aliasRest, createdFlashcard.getId()));
+            }
             flashcardResponse = aliasService.getFlashcardWithAlias(createdFlashcard);
         }
         return new ResponseEntity<>(flashcardResponse , HttpStatus.CREATED);
