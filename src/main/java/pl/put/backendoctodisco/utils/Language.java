@@ -1,5 +1,9 @@
 package pl.put.backendoctodisco.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public enum Language {
     EN;
 
@@ -10,5 +14,11 @@ public enum Language {
             }
         }
         return false;
+    }
+
+    public static String allToString(){
+        return Arrays.stream(Language.values()).map(lang -> {
+            return lang.name().toLowerCase();
+        }).collect(Collectors.joining(", "));
     }
 }
