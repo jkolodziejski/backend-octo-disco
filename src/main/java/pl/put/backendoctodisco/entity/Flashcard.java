@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Flashcard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(notes = "Flashcard ID", example = "1", required = false, hidden = true)
+    @ApiModelProperty(notes = "Flashcard ID", example = "1", required = false)
     @Column(name = "id", nullable = false)
     private Long id;
 
