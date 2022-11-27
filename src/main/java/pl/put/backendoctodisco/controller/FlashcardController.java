@@ -64,13 +64,13 @@ public class FlashcardController {
         List<Flashcard> filteredFlashcards = flashcardService.findInUsersDictionary(foundUser, flashcardRequest);
         if (!filteredFlashcards.isEmpty()) {
             aliasService.checkAndcreateAlias(filteredFlashcards.get(0).getId(), flashcardRequest.translation);
-            flashcardResponse = aliasService.getFlashcardWithAlias(filteredFlashcards.get(0));
+            flashcardResponse = flashcardService.getFlashcardWithAlias(filteredFlashcards.get(0));
         } else {
             Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
             for (String aliasRest : flashcardRequest.translation) {
                 aliasService.createAlias(new Alias(aliasRest, createdFlashcard.getId()));
             }
-            flashcardResponse = aliasService.getFlashcardWithAlias(createdFlashcard);
+            flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard);
         }
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
     }
@@ -135,7 +135,7 @@ public class FlashcardController {
         List<FlashcardResponse> flashcardListWithAlias = new ArrayList<>();
         List<Flashcard> listFlashcards = flashcards.getContent();
         for (Flashcard flashcard : listFlashcards) {
-            List<String> foundedAlias = aliasService.findAliasbyWordId(flashcard.getId());
+            List<String> foundedAlias = flashcardService.findAliasByWordId(flashcard.getId());
             FlashcardResponse flashcardResponse = new FlashcardResponse(flashcard, foundedAlias);
             flashcardListWithAlias.add(flashcardResponse);
         }

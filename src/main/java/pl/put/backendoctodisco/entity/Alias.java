@@ -23,7 +23,8 @@ public class Alias {
     @Column(name = "alias")
     private String alias;
 
-    @ApiModelProperty(notes = "Flashcard alias", example = "Hello")
+    //TODO change to flashcard_id
+    @ApiModelProperty(notes = "Flashcard id", example = "1")
     @JoinColumn(name = "word_id", referencedColumnName = "id")
     private Long wordId;
 

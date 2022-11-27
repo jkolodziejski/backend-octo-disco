@@ -3,11 +3,17 @@ package pl.put.backendoctodisco.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pl.put.backendoctodisco.entity.Alias;
 import pl.put.backendoctodisco.entity.Flashcard;
+import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
+import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
+import pl.put.backendoctodisco.repository.AliasRepository;
+import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,10 +22,13 @@ import java.util.Optional;
 @Service
 public class FlashcardService {
     private final FlashcardRepository repository;
+    private final FlashcardListContentRepository contentRepository;
+    private final AliasRepository aliasRepository;
 
-
-    public FlashcardService(FlashcardRepository repository) {
+    public FlashcardService(FlashcardRepository repository, FlashcardListContentRepository contentRepository, AliasRepository aliasRepository) {
         this.repository = repository;
+        this.contentRepository = contentRepository;
+        this.aliasRepository = aliasRepository;
     }
 
     public Flashcard createFlashcard(Flashcard flashcard) {
@@ -52,13 +61,37 @@ public class FlashcardService {
         return repository.findFlashcardByIsGlobalTrueAndLanguage(pageable, language);
     }
 
+    //TODO alias is a part of flashcard anyway, make this method private
+    public List<String> findAliasByWordId(Long word_id) {
+        List<Alias> foundedAliases = aliasRepository.findAliasesByWordId(word_id);
+        return foundedAliases.stream().map(Alias::getAlias).toList();
+    }
+
+    public FlashcardResponse getFlashcardWithAlias(Flashcard flashcard) {
+        List<String> foundedAlias = findAliasByWordId(flashcard.getId());
+        return new FlashcardResponse(flashcard, foundedAlias);
+    }
+
     public Page<Flashcard> getFlashcardsUser(Long userId, Pageable pageable, String language) {
         return repository.findFlashcardByIsGlobalFalseAndUserIdAndLanguage(userId, pageable, language);
     }
 
-
     public Page<Flashcard> getFlashcardsByKeyword(Pageable pageable, String keyword, String language) {
         return repository.findAllUsersWithPagination(pageable, keyword, language);
+    }
+
+    public List<FlashcardResponse> getFlashcardsFromList(Long listId){
+        ArrayList<FlashcardListContent> content = (ArrayList<FlashcardListContent>) contentRepository.findByListId(listId);
+        ArrayList<Flashcard> flashcards = new ArrayList<>();
+        //TODO idk why tf map doesnt work here but ill fix it later. it works for now
+        for (FlashcardListContent f : content) {
+            flashcards.add(findById(f.getFlashcardId()).get());
+        }
+//        (ArrayList<Flashcard>) content.stream().map(it -> findById(it.getFlashcardId()).get()).toList();
+        return flashcards.stream().map(it -> {
+            List<String> foundAlias = findAliasByWordId(it.getId());
+            return new FlashcardResponse(it, foundAlias);
+        }).toList();
     }
 
 

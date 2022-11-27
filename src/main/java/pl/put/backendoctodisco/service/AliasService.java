@@ -15,11 +15,9 @@ public class AliasService {
 
     private final AliasRepository repository;
 
-
     public AliasService(AliasRepository repository) {
         this.repository = repository;
     }
-
 
     public Alias createAlias(Alias alias) {
         return repository.save(alias);
@@ -27,20 +25,6 @@ public class AliasService {
 
     public List<Alias> findByWordId(Long word_id) {
         return repository.findByWordId(word_id);
-    }
-
-    public List<String> findAliasbyWordId(Long word_id) {
-        List<Alias> foundedAliases = repository.findAliasesByWordId(word_id);
-        List<String> alias = new ArrayList<>();
-        for (Alias alia : foundedAliases) {
-            alias.add(alia.getAlias());
-        }
-        return alias;
-    }
-
-    public FlashcardResponse getFlashcardWithAlias(Flashcard flashcard) {
-        List<String> foundedAlias = findAliasbyWordId(flashcard.getId());
-        return new FlashcardResponse(flashcard, foundedAlias);
     }
 
     public void checkAndcreateAlias(Long word_id, List<String> aliases) throws FlashcardAlreadyExistsException {

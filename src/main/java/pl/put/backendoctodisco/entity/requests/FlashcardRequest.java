@@ -1,12 +1,13 @@
 package pl.put.backendoctodisco.entity.requests;
 
 import io.swagger.annotations.ApiModelProperty;
+import pl.put.backendoctodisco.utils.Language;
 
 import javax.persistence.Column;
 import java.util.List;
 
 public class FlashcardRequest {
-    @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "en", required = true)
+    @ApiModelProperty(notes = "Language of the word", allowableValues = "en", example = "en", required = true)
     @Column(name = "language", nullable = false)
     public String language;
 

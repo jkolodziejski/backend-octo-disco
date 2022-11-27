@@ -50,7 +50,7 @@ public class FlashcardListService {
         return infoRepository.findByUserId(user.getId());
     }
 
-    public List<FlashcardListContent> findFlashcardsInList(Long listId) {
+    public List<FlashcardListContent> findListContent(Long listId) {
         return contentRepository.findByListId(listId);
     }
 

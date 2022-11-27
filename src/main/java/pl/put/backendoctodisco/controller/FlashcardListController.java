@@ -14,7 +14,7 @@ import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.AddListToFlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardListRequest;
-import pl.put.backendoctodisco.entity.requests.ListContentRequest;
+import pl.put.backendoctodisco.entity.requests.ListRequest;
 import pl.put.backendoctodisco.entity.responses.AllFlashcardsResponse;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.exceptions.*;
@@ -174,18 +174,13 @@ public class FlashcardListController {
     })
     @GetMapping("/get_cards")
     //TODO change return to ResponseEntity, correct the Swagger UI
-    private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody ListContentRequest listContentRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody ListRequest listRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
-        ArrayList<FlashcardListContent> content = (ArrayList<FlashcardListContent>) flashcardListService.findFlashcardsInList(listContentRequest.list_id);
-        List<Flashcard> flashcards = content.stream().map(it -> flashcardService.findById(it.getFlashcardId()).get()).toList();
-        List<FlashcardResponse> flashcardsResponse = flashcards.stream().map(it -> {
-            List<String> foundAlias = aliasService.findAliasbyWordId(it.getId());
-            return new FlashcardResponse(it, foundAlias);
-        }).toList();
-        AllFlashcardsResponse response = new AllFlashcardsResponse(flashcardsResponse);
+        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(listRequest.list_id);
+        AllFlashcardsResponse response = new AllFlashcardsResponse(flashcards);
 
         return response.generateResponse();
     }

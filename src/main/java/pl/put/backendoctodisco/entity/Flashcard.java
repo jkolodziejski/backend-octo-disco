@@ -21,7 +21,7 @@ public class Flashcard {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "pl", required = true)
+    @ApiModelProperty(notes = "Language of the word", allowableValues = "en", example = "en", required = true)
     @Column(name = "language", nullable = false)
     private String language;
 
@@ -45,7 +45,6 @@ public class Flashcard {
     public Flashcard(User user, FlashcardRequest request) {
         language = request.language;
         word = request.word;
-        //translation = request.translation;
         isGlobal = false;
         userId = user.getId();
     }
