@@ -26,7 +26,7 @@ public class FlashcardResponse {
     @ApiModelProperty(notes = "ID of the user who created the flashcard", example = "1", required = true)
     private final Long userId;
 
-    @ApiModelProperty(notes = "All translations of the word", example = "polska", required = true)
+    @ApiModelProperty(notes = "All translations of the word", example = "[polska, kraj rosnącej cebuli]", required = true)
     private final List<String> alias;
 
 
