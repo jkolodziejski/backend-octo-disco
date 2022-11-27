@@ -78,7 +78,7 @@ public class FlashcardController {
 
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database with all alias paged",
-            notes = "Returns list of flashcard, alias and size")
+            notes = "Returns list of flashcard, alias and metadata")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The resource has been fetched and transmitted in the message body"),
             @ApiResponse(code = 400, message = "Wrong request"),
@@ -112,7 +112,7 @@ public class FlashcardController {
 
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database by keyword with all alias paged",
-            notes = "Returns list of flashcard, alias and size")
+            notes = "Returns list of flashcard, alias and metadata")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),

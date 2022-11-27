@@ -14,7 +14,7 @@ public class FlashcardResponse {
     @ApiModelProperty(notes = "Flashcard ID", example = "1")
     private final Long id;
 
-    @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "pl", required = true)
+    @ApiModelProperty(notes = "Language of the word", allowableValues = "en", example = "en", required = true)
     private final String language;
 
     @ApiModelProperty(notes = "Word to learn", example = "Poland", required = true)
@@ -26,7 +26,7 @@ public class FlashcardResponse {
     @ApiModelProperty(notes = "ID of the user who created the flashcard", example = "1", required = true)
     private final Long userId;
 
-    @ApiModelProperty(notes = "All translations of the word", example = "polska", required = true)
+    @ApiModelProperty(notes = "All translations of the word", example =  "[Polska]", required = true)
     private final List<String> alias;
 
 
