@@ -52,6 +52,7 @@ public class QuizController {
         List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(listRequest.list_id);
         Quiz quiz = quizService.createQuizForCards(flashcards);
 
+        //TODO no question type determined in response
         return new ResponseEntity<>(quiz, HttpStatus.OK);
     }
 }
