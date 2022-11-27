@@ -22,13 +22,13 @@ public class AllFlashcardsResponse {
 
 
     public AllFlashcardsResponse(List<FlashcardResponse> flashcards) {
-        this.metadata = new Metadata(flashcards.size(), 1);
+        this.metadata = new Metadata((long) flashcards.size(), 1);
         this.flashcards = flashcards;
 
     }
 
     public AllFlashcardsResponse(List<FlashcardResponse> flashcards, Page<Flashcard> page) {
-        this.metadata = new Metadata(page.getNumberOfElements(), page.getTotalPages());
+        this.metadata = new Metadata(page.getTotalElements(), page.getTotalPages());
         this.flashcards = flashcards;
 
 

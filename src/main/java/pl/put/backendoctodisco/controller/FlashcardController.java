@@ -50,7 +50,7 @@ public class FlashcardController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
+            @ApiResponse(code = 409, message = "Alias already exists or nonexistent language.")
     })
     @PostMapping("/create")
     private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
@@ -99,9 +99,9 @@ public class FlashcardController {
         }
 
         Page<Flashcard> flashcardList;
-        if (Choice.valueOf(choice).equals(Choice.GLOBAL)) {
+        if (Choice.valueOf(choice.toUpperCase()).equals(Choice.GLOBAL)) {
             flashcardList = flashcardService.getAllFlashcardsGlobal(pageable, language);
-        } else if (Choice.valueOf(choice).equals(Choice.LOCAL)) {
+        } else if (Choice.valueOf(choice.toUpperCase()).equals(Choice.LOCAL)) {
             flashcardList = flashcardService.getFlashcardsUser(foundUser.getId(), pageable, language);
         } else {
             flashcardList = flashcardService.getAllFlashcards(pageable);

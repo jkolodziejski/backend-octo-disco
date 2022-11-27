@@ -7,10 +7,10 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Metadata {
-    private final Integer size;
+    private final Long size;
     private final Integer totalNumberPages;
 
-    public Metadata(Integer size, Integer totalNumberPages) {
+    public Metadata(Long size, Integer totalNumberPages) {
         this.size = size;
         this.totalNumberPages = totalNumberPages;
     }

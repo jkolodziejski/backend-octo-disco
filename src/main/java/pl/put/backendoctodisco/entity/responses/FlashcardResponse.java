@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class FlashcardResponse {
 
-    @ApiModelProperty(notes = "Flashcard ID", example = "1", required = false, hidden = true)
+    @ApiModelProperty(notes = "Flashcard ID", example = "1")
     private final Long id;
 
     @ApiModelProperty(notes = "Language of the word", allowableValues = "pl, en", example = "pl", required = true)
