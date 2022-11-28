@@ -14,11 +14,11 @@ import javax.persistence.*;
 @ToString
 @Getter
 public abstract class QuizQuestion {
-    @ApiModelProperty(notes = "Type of the question", example = "type", allowableValues = "type, choose, connect", required = true)
+    @ApiModelProperty(notes = "Type of the question", allowableValues = "type, choose, connect", required = true)
     @Column(name = "question_type", nullable = false)
-    private static String question_type;
+    public String question_type;
 
     protected QuizQuestion(String questionType){
-        QuizQuestion.question_type = questionType;
+        question_type = questionType;
     }
 }

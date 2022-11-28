@@ -1,0 +1,120 @@
+{
+    "questions": [
+        {
+            "question_type": "CONNECT",
+            "answers": [
+                {
+                    "word": "approach",
+                    "translation": "zbliżać się"
+                },
+                {
+                    "word": "carefully",
+                    "translation": " starannie"
+                },
+                {
+                    "word": "chemical",
+                    "translation": "chemikalia"
+                },
+                {
+                    "word": "create",
+                    "translation": " tworzyć"
+                },
+                {
+                    "word": "evil",
+                    "translation": " nikczemny"
+                }
+            ]
+        },
+        {
+            "question_type": "CHOOSE",
+            "answer": {
+                "word": "experiment",
+                "translation": " doświadczenie naukowe"
+            },
+            "false_options": [
+                "chemikalia",
+                " tworzyć",
+                " nerwowy "
+            ]
+        },
+        {
+            "question_type": "CHOOSE",
+            "answer": {
+                "word": "kill",
+                "translation": "zabić"
+            },
+            "false_options": [
+                "stworzyć",
+                "ostrożnie",
+                " starannie"
+            ]
+        },
+        {
+            "question_type": "CHOOSE",
+            "answer": {
+                "word": "laboratory",
+                "translation": "laboratorium"
+            },
+            "false_options": [
+                "zabić",
+                " nerwowy ",
+                "eksperyment"
+            ]
+        },
+        {
+            "question_type": "TYPE",
+            "flashcard": {
+                "id": 28,
+                "language": "en",
+                "word": "laugh",
+                "isGlobal": true,
+                "userId": 36,
+                "alias": [
+                    "śmiech śmiać się"
+                ]
+            }
+        },
+        {
+            "question_type": "TYPE",
+            "flashcard": {
+                "id": 29,
+                "language": "en",
+                "word": "loud",
+                "isGlobal": true,
+                "userId": 36,
+                "alias": [
+                    "głośny",
+                    " krzykliwy "
+                ]
+            }
+        },
+        {
+            "question_type": "TYPE",
+            "flashcard": {
+                "id": 30,
+                "language": "en",
+                "word": "nervous",
+                "isGlobal": true,
+                "userId": 36,
+                "alias": [
+                    "zdenerwowany",
+                    " nerwowy "
+                ]
+            }
+        },
+        {
+            "question_type": "TYPE",
+            "flashcard": {
+                "id": 31,
+                "language": "en",
+                "word": "noise",
+                "isGlobal": true,
+                "userId": 36,
+                "alias": [
+                    "hałas",
+                    " szum "
+                ]
+            }
+        }
+    ]
+}
