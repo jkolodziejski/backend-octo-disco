@@ -75,7 +75,7 @@ public class FlashcardController {
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
     }
 
-
+    /*
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database with all alias paged",
             notes = "Returns list of flashcard, alias and metadata")
@@ -110,6 +110,8 @@ public class FlashcardController {
         return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardList), HttpStatus.OK);
     }
 
+
+     */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database by keyword with all alias paged",
             notes = "Returns list of flashcard, alias and metadata")
@@ -119,7 +121,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
     })
     @GetMapping("/keyword")
-    private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable, String keyword, String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException {
+    private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable, boolean isGlobal, String keyword, String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if (language == null || keyword == null) {
@@ -128,7 +130,8 @@ public class FlashcardController {
         if (!Language.contains(language)) {
             throw new NonexistentLanguageException();
         }
-        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKeyword(pageable, keyword, language)), HttpStatus.OK);
+
+        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKeyword(pageable, keyword, language, isGlobal)), HttpStatus.OK);
     }
 
     private AllFlashcardsResponse getListFlashcardsWithAlias(Page<Flashcard> flashcards) {
