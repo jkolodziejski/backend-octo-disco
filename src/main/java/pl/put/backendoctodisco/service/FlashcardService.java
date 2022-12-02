@@ -76,8 +76,8 @@ public class FlashcardService {
         return repository.findFlashcardByIsGlobalFalseAndUserIdAndLanguage(userId, pageable, language);
     }
 
-    public Page<Flashcard> getFlashcardsByKeyword(Pageable pageable, String keyword, String language) {
-        return repository.findAllUsersWithPagination(pageable, keyword, language);
+    public Page<Flashcard> getFlashcardsByKeyword(Pageable pageable, String keyword, String language, boolean global) {
+        return repository.findAllUsersWithPagination(pageable, keyword, language, global);
     }
 
     public List<FlashcardResponse> getFlashcardsFromList(Long listId){
