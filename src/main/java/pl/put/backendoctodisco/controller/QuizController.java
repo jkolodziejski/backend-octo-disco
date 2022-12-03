@@ -44,12 +44,12 @@ public class QuizController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping
-    private ResponseEntity<Quiz> getQuiz(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody ListRequest listRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private ResponseEntity<Quiz> getQuiz(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "list_id") Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
-        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(listRequest.list_id);
+        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
         Quiz quiz = quizService.createQuizForCards(flashcards);
 
         //TODO no question type determined in response
