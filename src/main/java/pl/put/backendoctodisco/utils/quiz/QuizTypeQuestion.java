@@ -1,15 +1,11 @@
-package pl.put.backendoctodisco.utils;
+package pl.put.backendoctodisco.utils.quiz;
 
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.entity.QuizQuestion;
-import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
+import pl.put.backendoctodisco.utils.QuizQuestionType;
 
 import javax.persistence.*;
 
