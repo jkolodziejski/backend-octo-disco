@@ -125,8 +125,8 @@ public class FlashcardController {
     private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken,
                                                                          @PageableDefault(value = 25) Pageable pageable,
                                                                          @ApiParam(name = "dictionary", allowableValues = "global, local, both", required = true) String dictionary,
-                                                                         @ApiParam(name = "keyword") String keyword,
-                                                                         @ApiParam(name = "language", allowableValues = "en", required = true) String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException, NonexistentDictionaryException {
+                                                                         String keyword,
+                                                                         @ApiParam(name = "language", allowableValues = "en", required = true) String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException, NonexistentDictionaryException, PageIndexOutOfRangeException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
 
@@ -145,6 +145,9 @@ public class FlashcardController {
         Page<Flashcard> foundFlashcards = flashcardService.getFlashcardsByKeyword(pageable, keyword, language, dictionary, foundUser.getId());
         if(foundFlashcards == null){
             throw new NonexistentDictionaryException();
+        }
+        if(pageable.getPageNumber() > foundFlashcards.getTotalPages() || pageable.getPageNumber() < 0){
+            throw new PageIndexOutOfRangeException();
         }
         return new ResponseEntity<>(getListFlashcardsWithAlias(foundFlashcards), HttpStatus.OK);
     }
