@@ -12,6 +12,7 @@ import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.repository.AliasRepository;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
+import pl.put.backendoctodisco.utils.DictionaryChoice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +77,15 @@ public class FlashcardService {
         return repository.findFlashcardByIsGlobalFalseAndUserIdAndLanguage(userId, pageable, language);
     }
 
-    public Page<Flashcard> getFlashcardsByKeyword(Pageable pageable, String keyword, String language, boolean global) {
-        return repository.findAllUsersWithPagination(pageable, keyword, language, global);
+    public Page<Flashcard> getFlashcardsByKeyword(Pageable pageable, String keyword, String language, String global, Long userId) {
+        if(Objects.equals(global, DictionaryChoice.GLOBAL.name().toLowerCase())){
+            return repository.searchGlobalFlashcardsWithPagination(pageable, keyword, language);
+        } else if(Objects.equals(global, DictionaryChoice.LOCAL.name().toLowerCase())) {
+            return repository.searchUsersFlashcardsWithPagination(pageable, keyword, language, userId);
+        } else if(Objects.equals(global, DictionaryChoice.BOTH.name().toLowerCase())) {
+            return repository.searchFlashcardsWithPagination(pageable, keyword, language, userId);
+        }
+        return null;
     }
 
     public List<FlashcardResponse> getFlashcardsFromList(Long listId){

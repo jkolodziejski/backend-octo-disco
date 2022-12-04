@@ -3,7 +3,7 @@ package pl.put.backendoctodisco.exceptions;
 import org.springframework.http.HttpStatus;
 
 public class ParameterIsMissingException extends ExceptionResponse {
-    public ParameterIsMissingException() {
-        super(HttpStatus.BAD_REQUEST, "Parameters are missing");
+    public ParameterIsMissingException(String parameterMissing) {
+        super(HttpStatus.BAD_REQUEST, "Parameter "+parameterMissing+" is missing");
     }
 }
