@@ -1,20 +1,16 @@
 package pl.put.backendoctodisco.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pl.put.backendoctodisco.entity.*;
-import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
-import pl.put.backendoctodisco.entity.requests.ListRequest;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.entity.responses.Quiz;
 import pl.put.backendoctodisco.repository.AliasRepository;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
-import pl.put.backendoctodisco.utils.QuizChooseQuestion;
-import pl.put.backendoctodisco.utils.QuizConnectQuestion;
-import pl.put.backendoctodisco.utils.QuizQuestionType;
-import pl.put.backendoctodisco.utils.QuizTypeQuestion;
+import pl.put.backendoctodisco.utils.*;
+import pl.put.backendoctodisco.utils.quiz.QuizChooseQuestion;
+import pl.put.backendoctodisco.utils.quiz.QuizConnectQuestion;
+import pl.put.backendoctodisco.utils.quiz.QuizQuestion;
+import pl.put.backendoctodisco.utils.quiz.QuizTypeQuestion;
 
 import java.util.*;
 

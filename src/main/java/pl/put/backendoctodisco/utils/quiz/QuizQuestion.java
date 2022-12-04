@@ -1,4 +1,4 @@
-package pl.put.backendoctodisco.entity;
+package pl.put.backendoctodisco.utils.quiz;
 
 
 import io.swagger.annotations.ApiModelProperty;

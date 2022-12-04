@@ -40,7 +40,7 @@ public class QuizController {
     @ApiOperation(value = "Get quiz of flashcards",
             notes = "Returns quiz")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully found flashcards"),
+            @ApiResponse(code = 200, message = "Successfully found flashcards list"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping

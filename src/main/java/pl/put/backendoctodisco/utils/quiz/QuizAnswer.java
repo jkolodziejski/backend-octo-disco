@@ -1,10 +1,9 @@
-package pl.put.backendoctodisco.utils;
+package pl.put.backendoctodisco.utils.quiz;
 
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.ToString;
-import pl.put.backendoctodisco.entity.QuizQuestion;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 
 import javax.persistence.Column;
