@@ -35,7 +35,7 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
     Page<Flashcard> searchUsersFlashcardsWithPagination(Pageable pageable, String keyword, String language, Long userId);
 
     @Query(countQuery = countQuery+" and ((is_global = 0 and user_id = ?3) or is_global = 1)",
-            value = searchQuery+" and ((is_global = 0 and user_id = ?3) or is_global = 1)",
+            value = searchQuery+" and ((is_global = 0 and user_id = ?3) or is_global = 1) order by is_global",
             nativeQuery = true)
     Page<Flashcard> searchFlashcardsWithPagination(Pageable pageable, String keyword, String language, Long userId);
 }
