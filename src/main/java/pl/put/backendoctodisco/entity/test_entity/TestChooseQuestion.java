@@ -1,21 +1,16 @@
 package pl.put.backendoctodisco.entity.test_entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.hibernate.Hibernate;
-import pl.put.backendoctodisco.entity.User;
-import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @ToString
 @RequiredArgsConstructor
 @Data
-public class TestTypeQuestion {
+public class TestChooseQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -30,13 +25,18 @@ public class TestTypeQuestion {
     @Column(name = "sentence", nullable = false)
     private String sentence;
 
-    @Column(name = "sentence_word", nullable = false)
-    private String sentence_word;
+    @Column(name = "answer", nullable = false)
+    private String answer;
 
-    @Column(name = "translation", nullable = false)
-    private String translation;
+    @Column(name = "false_option_1", nullable = false)
+    private String false_option_1;
 
-    @Column(name = "translation_word", nullable = false)
-    private String translation_word;
+    @Column(name = "false_option_2")
+    private String false_option_2;
 
+    @Column(name = "false_option_3")
+    private String false_option_3;
+
+    @Column(name = "false_option_4")
+    private String false_option_4;
 }

@@ -40,4 +40,41 @@ CREATE TABLE ALIAS(
                       CONSTRAINT fk_alias FOREIGN KEY(word_id) references flashcard(id)
 );
 
+CREATE TABLE test_type_question(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	language varchar(100),
+	difficulty int,
+	sentence varchar(255),
+	sentence_word varchar(100),
+	translation varchar(255),
+	translation_word varchar(100)
+);
+
+CREATE TABLE test_choose_question(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	language varchar(100),
+	difficulty int,
+	sentence varchar(255),
+	answer varchar(100),
+	false_option_1 varchar(100),
+	false_option_2 varchar(100),
+	false_option_3 varchar(100),
+	false_option_4 varchar(100)
+);
+
+CREATE TABLE test_order_question(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	language varchar(100),
+	difficulty int,
+	sentence varchar(255)
+);
+
+CREATE TABLE test_order_answer(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	question_id int,
+	order_nr int,
+	sentence varchar(100),
+	CONSTRAINT fk_answer FOREIGN KEY(question_id) references test_order_question(id)
+);
+
 

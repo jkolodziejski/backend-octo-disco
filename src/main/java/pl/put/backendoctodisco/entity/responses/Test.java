@@ -11,12 +11,12 @@ import java.util.List;
 
 @ToString
 @Getter
-public class TestResponse {
+public class Test {
     @ApiModelProperty(notes = "List of questions", example="not available", required = true)
     @Column(name = "questions", nullable = false)
     private List<TestQuestion> questions;
 
-    public TestResponse(List<TestQuestion> questions){
+    public Test(List<TestQuestion> questions){
         this.questions = questions;
     }
 }
