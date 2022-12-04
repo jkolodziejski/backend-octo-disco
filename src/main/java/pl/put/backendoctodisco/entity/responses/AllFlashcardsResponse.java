@@ -14,10 +14,10 @@ import java.util.Map;
 @ToString
 public class AllFlashcardsResponse {
 
-    @ApiModelProperty(notes = "Metadata of Response ")
+    @ApiModelProperty(notes = "Metadata of the response ")
     private final Metadata metadata;
 
-    @ApiModelProperty(notes = "List of flashcards with Alias")
+    @ApiModelProperty(notes = "List of flashcards")
     private final List<FlashcardResponse> flashcards;
 
 

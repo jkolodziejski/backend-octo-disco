@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class NonexistentLanguageException extends ExceptionResponse {
     public NonexistentLanguageException() {
-        super(HttpStatus.CONFLICT, "Flashcard request has language that does not exist in the database.");
+        super(HttpStatus.BAD_REQUEST, "Flashcard request has language that does not exist in the database.");
     }
 }

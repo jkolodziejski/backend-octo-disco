@@ -2,6 +2,7 @@ package pl.put.backendoctodisco.controller;
 
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,6 @@ import pl.put.backendoctodisco.service.AliasService;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
-import pl.put.backendoctodisco.utils.Choice;
 import pl.put.backendoctodisco.utils.Language;
 
 import java.util.ArrayList;
@@ -49,8 +49,9 @@ public class FlashcardController {
             notes = "Returns the created flashcard")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
+            @ApiResponse(code = 400, message = "Nonexistent language"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 409, message = "Alias already exists or nonexistent language.")
+            @ApiResponse(code = 409, message = "Alias already exists")
     })
     @PostMapping("/create")
     private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
@@ -75,7 +76,7 @@ public class FlashcardController {
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
     }
 
-
+    /*
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database with all alias paged",
             notes = "Returns list of flashcard, alias and metadata")
@@ -110,25 +111,45 @@ public class FlashcardController {
         return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardList), HttpStatus.OK);
     }
 
+
+     */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database by keyword with all alias paged",
-            notes = "Returns list of flashcard, alias and metadata")
+            notes = "Returns pages of flashcard, alias and metadata")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfully created"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 409, message = "Flashcard already exists or nonexistent language.")
+            @ApiResponse(code = 200, message = "Successfully searched"),
+            @ApiResponse(code = 400, message = "Wrong request"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
-    @GetMapping("/keyword")
-    private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @PageableDefault(value = 25) Pageable pageable, String keyword, String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException {
+    @GetMapping("/search")
+    private ResponseEntity<AllFlashcardsResponse> getFlashcardsByKeyword(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken,
+                                                                         @PageableDefault(value = 25) Pageable pageable,
+                                                                         @ApiParam(name = "dictionary", allowableValues = "global, local, both", required = true) String dictionary,
+                                                                         String keyword,
+                                                                         @ApiParam(name = "language", allowableValues = "en", required = true) String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException, NonexistentDictionaryException, PageIndexOutOfRangeException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
-        if (language == null || keyword == null) {
-            throw new ParameterIsMissingException();
+
+        if (language == null) {
+            throw new ParameterIsMissingException("language");
+        }
+        if(dictionary == null){
+            throw new ParameterIsMissingException("dictionary");
         }
         if (!Language.contains(language)) {
             throw new NonexistentLanguageException();
         }
-        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardService.getFlashcardsByKeyword(pageable, keyword, language)), HttpStatus.OK);
+        if(keyword == null){
+            keyword = "";
+        }
+        Page<Flashcard> foundFlashcards = flashcardService.getFlashcardsByKeyword(pageable, keyword, language, dictionary, foundUser.getId());
+        if(foundFlashcards == null){
+            throw new NonexistentDictionaryException();
+        }
+        if(pageable.getPageNumber() > foundFlashcards.getTotalPages() || pageable.getPageNumber() < 0){
+            throw new PageIndexOutOfRangeException();
+        }
+        return new ResponseEntity<>(getListFlashcardsWithAlias(foundFlashcards), HttpStatus.OK);
     }
 
     private AllFlashcardsResponse getListFlashcardsWithAlias(Page<Flashcard> flashcards) {
