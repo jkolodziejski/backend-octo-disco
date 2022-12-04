@@ -10,7 +10,7 @@ import javax.persistence.Column;
 @ToString
 @Getter
 public abstract class TestQuestion {
-    @ApiModelProperty(notes = "Type of the question", allowableValues = "type, choose, arrange", required = true)
+    @ApiModelProperty(notes = "Type of the question", allowableValues = "type, choose, order", required = true)
     @Column(name = "question_type", nullable = false)
     public String question_type;
 

@@ -25,6 +25,7 @@ import pl.put.backendoctodisco.utils.test.TestOrderQuestionResponse;
 import pl.put.backendoctodisco.utils.test.TestQuestion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -45,20 +46,23 @@ public class TestController {
     @ApiOperation(value = "Get grammar test",
             notes = "Returns test")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully found flashcards"),
+            @ApiResponse(code = 200, message = "Successfully created test"),
+            @ApiResponse(code = 400, message = "Difficulty missing in request"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping
-    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Integer difficulty) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "difficulty", required = true) Integer difficulty, @RequestParam(name = "size", required = false) Integer size) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
-        List<TestQuestion> questions = new ArrayList<>();
-        questions.addAll(testService.getTypeQuestions(difficulty));
-        questions.addAll(testService.getChooseQuestions(difficulty));
-        questions.addAll(testService.getOrderQuestions(difficulty));
+        if(difficulty == null){
+            throw new ParameterIsMissingException("difficulty");
+        }
+        if(size == null){
+            size = 10;
+        }
 
-        return new ResponseEntity<>(new Test(questions), HttpStatus.OK);
+        return new ResponseEntity<>(testService.createTest(difficulty, size), HttpStatus.OK);
     }
 }
