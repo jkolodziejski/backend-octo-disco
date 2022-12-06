@@ -12,6 +12,4 @@ public interface AliasRepository extends JpaRepository<Alias, Integer> {
     List<Alias> findByWordId(Long word_id);
 
     List<Alias> findAliasesByWordId(Long word_id);
-
-
 }

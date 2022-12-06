@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pl.put.backendoctodisco.entity.Flashcard;
 
 import java.util.List;
@@ -38,4 +39,7 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
             value = searchQuery+" and ((is_global = 0 and user_id = ?3) or is_global = 1) order by is_global",
             nativeQuery = true)
     Page<Flashcard> searchFlashcardsWithPagination(Pageable pageable, String keyword, String language, Long userId);
+
+    @Transactional
+    long deleteById(Long id);
 }

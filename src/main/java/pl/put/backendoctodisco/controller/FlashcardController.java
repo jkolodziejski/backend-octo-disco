@@ -27,6 +27,8 @@ import pl.put.backendoctodisco.utils.Language;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 @RestController
@@ -53,7 +55,7 @@ public class FlashcardController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
             @ApiResponse(code = 409, message = "Alias already exists")
     })
-    @PostMapping("/create")
+    @PostMapping
     private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
         User foundUser = userService.findUserByAuthToken(authToken);
         FlashcardResponse flashcardResponse;
@@ -74,6 +76,37 @@ public class FlashcardController {
             flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard);
         }
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete flashcard with all its data from database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 400, message = "Nonexistent flashcard"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard does not exists"),
+            @ApiResponse(code = 409, message = "Server error")
+    })
+    @DeleteMapping
+    private ResponseEntity<HttpStatus> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardDoesNotExistException, FlashcardNotAvailableException, ServerErrorException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+        if (flashcardId == null) {
+            throw new NonexistentLanguageException();
+        }
+        Optional<Flashcard> found = flashcardService.findById(flashcardId);
+        if(found.isEmpty()){
+            throw new FlashcardDoesNotExistException();
+        }
+        //TODO admins can delete global cards
+        if(found.get().getIsGlobal() || !Objects.equals(found.get().getUserId(), foundUser.getId())){
+            throw new FlashcardNotAvailableException();
+        }
+        //TODO needs to be cascading
+        if(!flashcardService.deleteFlashcard(flashcardId)){
+            throw new ServerErrorException("Problem deleting flashcard. No entity was deleted.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
     }
 
     /*
