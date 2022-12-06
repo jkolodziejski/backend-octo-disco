@@ -51,7 +51,7 @@ public class FlashcardListController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
             @ApiResponse(code = 409, message = "Flashcard list already exists.")
     })
-    @PostMapping("/create")
+    @PostMapping
     private ResponseEntity<FlashcardListInfo> createFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardListRequest flashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListAlreadyExistsException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
@@ -65,6 +65,35 @@ public class FlashcardListController {
 
         FlashcardListInfo createdCardList = flashcardListService.createFlashcardList(new FlashcardListInfo(foundUser, flashcardListRequest));
         return new ResponseEntity<>(createdCardList, HttpStatus.CREATED);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete flashcard with all its data from database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 400, message = "Nonexistent flashcard list"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard list not available"),
+            @ApiResponse(code = 409, message = "Server error")
+    })
+    @DeleteMapping
+    private ResponseEntity<HttpStatus> deleteFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long listId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardNotAvailableException, ServerErrorException, ParameterIsMissingException, FlashcardListDoesNotExistException, FlashcardListNotAvailableException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+        if (listId == null) {
+            throw new ParameterIsMissingException("listId");
+        }
+        Optional<FlashcardListInfo> found = flashcardListService.findListById(listId);
+        if(found.isEmpty()){
+            throw new FlashcardListDoesNotExistException();
+        }
+        if(!Objects.equals(found.get().getUserId(), foundUser.getId())){
+            throw new FlashcardListNotAvailableException();
+        }
+        if(!flashcardListService.deleteList(listId)){
+            throw new ServerErrorException("Problem deleting flashcard list. No entity was deleted.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -154,7 +183,7 @@ public class FlashcardListController {
             @ApiResponse(code = 200, message = "Successfully found users lists"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
-    @GetMapping("/get_lists")
+    @GetMapping("/lists")
     private ResponseEntity<ArrayList<FlashcardListInfo>> getFlashcardLists(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
@@ -172,7 +201,7 @@ public class FlashcardListController {
             @ApiResponse(code = 200, message = "Successfully found flashcards"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
-    @GetMapping("/get_cards")
+    @GetMapping("/cards")
     //TODO change return to ResponseEntity, correct the Swagger UI
     private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody ListRequest listRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);

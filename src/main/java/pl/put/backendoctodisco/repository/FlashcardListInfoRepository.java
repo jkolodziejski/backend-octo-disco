@@ -4,6 +4,7 @@ package pl.put.backendoctodisco.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface FlashcardListInfoRepository extends JpaRepository<FlashcardList
     List<FlashcardListInfo> findById(Long id);
 
     List<FlashcardListInfo> findByUserId(Long id);
+
+    @Transactional
+    long deleteById(Long id);
 }

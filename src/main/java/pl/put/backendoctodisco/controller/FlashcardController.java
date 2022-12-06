@@ -83,15 +83,15 @@ public class FlashcardController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),
             @ApiResponse(code = 400, message = "Nonexistent flashcard"),
-            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard does not exists"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard not available"),
             @ApiResponse(code = 409, message = "Server error")
     })
     @DeleteMapping
-    private ResponseEntity<HttpStatus> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardDoesNotExistException, FlashcardNotAvailableException, ServerErrorException {
+    private ResponseEntity<HttpStatus> deleteFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardDoesNotExistException, FlashcardNotAvailableException, ServerErrorException, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if (flashcardId == null) {
-            throw new NonexistentLanguageException();
+            throw new ParameterIsMissingException("flashcardId");
         }
         Optional<Flashcard> found = flashcardService.findById(flashcardId);
         if(found.isEmpty()){
