@@ -174,12 +174,12 @@ public class FlashcardListController {
     })
     @GetMapping("/get_cards")
     //TODO change return to ResponseEntity, correct the Swagger UI
-    private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody ListRequest listRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
-        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(listRequest.list_id);
+        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
         AllFlashcardsResponse response = new AllFlashcardsResponse(flashcards);
 
         return response.generateResponse();
