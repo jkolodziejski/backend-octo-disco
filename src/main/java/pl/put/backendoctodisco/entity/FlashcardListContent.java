@@ -30,7 +30,7 @@ public class FlashcardListContent {
     }
 
     public FlashcardListContent(Long listId, Long flashcardId) {
-        flashcardId = flashcardId;
-        listId = listId;
+        this.flashcardId = flashcardId;
+        this.listId = listId;
     }
 }
