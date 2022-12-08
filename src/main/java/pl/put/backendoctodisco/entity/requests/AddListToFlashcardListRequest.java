@@ -6,5 +6,8 @@ import java.util.ArrayList;
 
 public class AddListToFlashcardListRequest {
     @ApiModelProperty(notes = "Requests for every flashcard to be added to the list", required = true)
-    public ArrayList<AddToFlashcardListRequest> flashcards_requests;
+    public Long list_id;
+
+    @ApiModelProperty(notes = "Requests for every flashcard to be added to the list", required = true)
+    public ArrayList<Long> flashcard_ids;
 }

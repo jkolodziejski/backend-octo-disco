@@ -121,16 +121,16 @@ public class FlashcardListController {
 
         ArrayList<FlashcardListContent> response = new ArrayList<>();
 
-        for (AddToFlashcardListRequest req : addToFlashcardListRequest.flashcards_requests) {
+        for (Long req : addToFlashcardListRequest.flashcard_ids) {
 
-            FlashcardListContent flashcardListContent = new FlashcardListContent(req);
+            FlashcardListContent flashcardListContent = new FlashcardListContent(addToFlashcardListRequest.list_id, req);
             Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
             //TODO not sure about the exceptions there
-            if (flashcardListService.findListById(req.list_id).isEmpty()) {
+            if (flashcardListService.findListById(addToFlashcardListRequest.list_id).isEmpty()) {
                 throw new FlashcardListDoesNotExistException();
             }
-            Optional<Flashcard> foundFlashcard = flashcardService.findById(req.flashcard_id);
+            Optional<Flashcard> foundFlashcard = flashcardService.findById(req);
             if (foundFlashcard.isEmpty()) {
                 throw new FlashcardDoesNotExistException();
             } else {
@@ -174,7 +174,7 @@ public class FlashcardListController {
     })
     @GetMapping("/get_cards")
     //TODO change return to ResponseEntity, correct the Swagger UI
-    private Map<String, Object> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private AllFlashcardsResponse getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -182,6 +182,6 @@ public class FlashcardListController {
         List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
         AllFlashcardsResponse response = new AllFlashcardsResponse(flashcards);
 
-        return response.generateResponse();
+        return response;
     }
 }

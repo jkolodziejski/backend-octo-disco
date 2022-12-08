@@ -30,17 +30,5 @@ public class AllFlashcardsResponse {
     public AllFlashcardsResponse(List<FlashcardResponse> flashcards, Page<Flashcard> page) {
         this.metadata = new Metadata(page.getTotalElements(), page.getTotalPages());
         this.flashcards = flashcards;
-
-
     }
-
-
-    public Map<String, Object> generateResponse() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("flashcards", flashcards);
-        map.put("Metadate", metadata);
-        return map;
-    }
-
-
 }
