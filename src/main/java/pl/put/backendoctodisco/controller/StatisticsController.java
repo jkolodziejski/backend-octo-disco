@@ -48,17 +48,17 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/quiz")
-    private ResponseEntity<FlashcardStatistics> sendStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, QuizResultRequest quizResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private ResponseEntity<String> sendStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody QuizResultRequest quizResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
         statisticsService.updateStatistics(quizResult, foundUser);
 
-        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
-        Quiz quiz = quizService.createQuizForCards(flashcards);
+//        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
+//        Quiz quiz = quizService.createQuizForCards(flashcards);
 
         //TODO no question type determined in response
-        return new ResponseEntity<>(quiz, HttpStatus.OK);
+        return new ResponseEntity<>("n", HttpStatus.OK);
     }
 }
