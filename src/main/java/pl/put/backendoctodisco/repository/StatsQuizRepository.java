@@ -18,6 +18,6 @@ public interface StatsQuizRepository extends JpaRepository<FlashcardStatistics, 
     int updateCard(Long user_id, Long flashcard_id, Boolean learned);
 
     @Query(value = "SELECT * FROM flashcard_statistics where user_id = ?1 and flashcard_id = ?2", nativeQuery = true)
-    Optional<FlashcardStatistics> findByUserIdAndFlashcardId(Long user_id, Long flashcard_id);
+    Optional<FlashcardStatistics> findByUserIdAndFlashcardId(Long user_id, Long flashcard_id); 
 
 }

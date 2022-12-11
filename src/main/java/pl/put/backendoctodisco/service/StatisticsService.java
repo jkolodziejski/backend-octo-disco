@@ -1,20 +1,29 @@
 package pl.put.backendoctodisco.service;
 
 import org.springframework.stereotype.Service;
+import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.FlashcardStatistics;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.QuizResultRequest;
+import pl.put.backendoctodisco.entity.responses.CardListStatistics;
+import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.StatsQuizRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Service
 public class StatisticsService {
-    private final StatsQuizRepository quizRepository;
 
-    public StatisticsService(StatsQuizRepository quizRepository) {
+    private final StatsQuizRepository quizRepository;
+    private final FlashcardListContentRepository listRepository;
+
+    public StatisticsService(StatsQuizRepository quizRepository, FlashcardListContentRepository listRepository) {
         this.quizRepository = quizRepository;
+        this.listRepository = listRepository;
     }
 
     public void updateStatistics(QuizResultRequest quizResult, User user){
@@ -34,4 +43,23 @@ public class StatisticsService {
         }
     }
 
+    public CardListStatistics findFlashcardListStatistics(User user, Long list_id){
+        List<FlashcardListContent> listContent = listRepository.findByListId(list_id);
+        List<Long> learned= new ArrayList<>();
+        List<Long> notLearned= new ArrayList<>();
+        List<Long> notAttempted= new ArrayList<>();
+        listContent.forEach(card -> {
+            Optional<FlashcardStatistics> stat = quizRepository.findByUserIdAndFlashcardId(user.getId(), card.getFlashcardId());
+            if(stat.isEmpty()){
+                notAttempted.add(card.getFlashcardId());
+            }else{
+                if(stat.get().getLearned()){
+                    learned.add(card.getFlashcardId());
+                }else{
+                    notLearned.add(card.getFlashcardId());
+                }
+            }
+        });
+        return new CardListStatistics(learned.size(), notLearned.size(), notAttempted.size());
+    }
 }

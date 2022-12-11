@@ -101,6 +101,4 @@ public class FlashcardService {
             return new FlashcardResponse(it, foundAlias);
         }).toList();
     }
-
-
 }

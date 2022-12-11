@@ -8,6 +8,10 @@ import java.util.List;
 
 public class QuizResultRequest {
     @ApiModelProperty(notes = "ID of flashcards answered correctly in quiz", example = "Monday exam - phrases", required = true)
+    @Column(name = "list_id", nullable = false)
+    public Long list_id;
+
+    @ApiModelProperty(notes = "ID of flashcards answered correctly in quiz", example = "Monday exam - phrases", required = true)
     @Column(name = "name", nullable = false)
     public ArrayList<Long> correct_id;
 

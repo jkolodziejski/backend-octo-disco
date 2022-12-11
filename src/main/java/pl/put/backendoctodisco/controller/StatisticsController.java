@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.FlashcardStatistics;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.QuizResultRequest;
+import pl.put.backendoctodisco.entity.responses.CardListStatistics;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.entity.responses.Quiz;
+import pl.put.backendoctodisco.exceptions.ParameterIsMissingException;
 import pl.put.backendoctodisco.exceptions.TokenExpiredException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
 import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
@@ -41,24 +43,45 @@ public class StatisticsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get quiz of flashcards",
-            notes = "Returns quiz")
+    @ApiOperation(value = "Update statistics of flashcards",
+            notes = "Returns list statistics, take into account that endpoint does not check if flashcard is in flashcard list.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully found flashcards list"),
+            @ApiResponse(code = 200, message = "Successfully updated statistics"),
+            @ApiResponse(code = 400, message = "List ID not passed"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/quiz")
-    private ResponseEntity<String> sendStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody QuizResultRequest quizResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private ResponseEntity<CardListStatistics> sendQuizStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody QuizResultRequest quizResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
         statisticsService.updateStatistics(quizResult, foundUser);
+        if(quizResult.list_id == null){
+            throw new ParameterIsMissingException("list_id");
+        }
 
-//        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
-//        Quiz quiz = quizService.createQuizForCards(flashcards);
+        return new ResponseEntity<>(statisticsService.findFlashcardListStatistics(foundUser, quizResult.list_id), HttpStatus.OK);
+    }
 
-        //TODO no question type determined in response
-        return new ResponseEntity<>("n", HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Update statistics of flashcards",
+            notes = "Returns list statistics, take into account that endpoint does not check if flashcard is in flashcard list.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated statistics"),
+            @ApiResponse(code = 400, message = "List ID not passed"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @GetMapping("/list")
+    private ResponseEntity<CardListStatistics> getCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        if(list_id == null){
+            throw new ParameterIsMissingException("list_id");
+        }
+
+        return new ResponseEntity<>(statisticsService.findFlashcardListStatistics(foundUser, list_id), HttpStatus.OK);
     }
 }
