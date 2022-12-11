@@ -45,7 +45,6 @@ public class UserController {
         return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Login to webserver",
             notes = "Returns authorization token for logged user")

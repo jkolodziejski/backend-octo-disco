@@ -39,7 +39,6 @@ public class AliasService {
             }
             createAlias(new Alias(aliasReq, word_id));
         }
-
     }
 
 }

@@ -125,6 +125,35 @@ public class FlashcardListController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete flashcard with all its data from database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 400, message = "Nonexistent flashcard list"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard list not available"),
+            @ApiResponse(code = 409, message = "Server error")
+    })
+    @DeleteMapping
+    private ResponseEntity<HttpStatus> deleteFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long listId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ServerErrorException, ParameterIsMissingException, FlashcardListDoesNotExistException, FlashcardListNotAvailableException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+        if (listId == null) {
+            throw new ParameterIsMissingException("listId");
+        }
+        Optional<FlashcardListInfo> found = flashcardListService.findListById(listId);
+        if(found.isEmpty()){
+            throw new FlashcardListDoesNotExistException();
+        }
+        if(!Objects.equals(found.get().getUserId(), foundUser.getId())){
+            throw new FlashcardListNotAvailableException();
+        }
+        if(!flashcardListService.deleteList(listId)){
+            throw new ServerErrorException("Problem deleting flashcard list. No entity was deleted.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
+    }
+
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ApiOperation(value = "Add a flashcard to the list in the database",
             notes = "Returns ID's of both flashcard and list (and the connection entity ID as well).")

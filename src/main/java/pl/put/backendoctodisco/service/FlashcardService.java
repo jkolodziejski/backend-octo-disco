@@ -88,6 +88,11 @@ public class FlashcardService {
         return null;
     }
 
+    public boolean deleteFlashcard(Long id){
+        long deleted = repository.deleteById(id);
+        return deleted > 0;
+    }
+
     public List<FlashcardResponse> getFlashcardsFromList(Long listId){
         ArrayList<FlashcardListContent> content = (ArrayList<FlashcardListContent>) contentRepository.findByListId(listId);
         ArrayList<Flashcard> flashcards = new ArrayList<>();

@@ -22,6 +22,9 @@ public interface FlashcardListInfoRepository extends JpaRepository<FlashcardList
 
     List<FlashcardListInfo> findByUserId(Long id);
 
+    @Transactional
+    long deleteById(Long id);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE flashcard_list_info set name = ?2 where id = ?1", nativeQuery = true)

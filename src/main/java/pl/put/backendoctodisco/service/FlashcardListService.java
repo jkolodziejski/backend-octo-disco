@@ -57,6 +57,10 @@ public class FlashcardListService {
         return infoRepository.findById(id).stream().findFirst();
     }
 
+    public boolean deleteList(Long id){
+        return infoRepository.deleteById(id) > 0;
+    }
+
     public List<FlashcardListInfo> findUsersLists(User user) {
         return infoRepository.findByUserId(user.getId());
     }
