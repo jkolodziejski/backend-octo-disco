@@ -25,8 +25,13 @@ public class FlashcardListInfo {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @ApiModelProperty(notes = "Flashcard list name", example = "Monday exam - phrases", required = true)
+    @Column(name = "description", nullable = false)
+    private String description;
+
     public FlashcardListInfo(User user, FlashcardListRequest flashcardListRequest) {
         this.userId = user.getId();
         this.name = flashcardListRequest.name;
+        this.description = flashcardListRequest.description;
     }
 }
