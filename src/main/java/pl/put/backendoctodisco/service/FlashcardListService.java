@@ -26,6 +26,17 @@ public class FlashcardListService {
         return infoRepository.save(flashcardListInfo);
     }
 
+    public int updateFlashcardList(Long id, FlashcardListInfo flashcardListInfo) {
+        int changes=0;
+        if(flashcardListInfo.getName() != null) {
+            changes+=infoRepository.updateListName(id, flashcardListInfo.getName());
+        }
+        if(flashcardListInfo.getDescription() != null) {
+            changes+=infoRepository.updateListDescription(id, flashcardListInfo.getDescription());
+        }
+        return changes;
+    }
+
     public Optional<FlashcardListInfo> findByName(Long userId, String name) {
         return infoRepository.findByName(userId, name).stream().findFirst();
     }
@@ -56,6 +67,10 @@ public class FlashcardListService {
 
     public List<FlashcardListContent> findListContent(Long listId) {
         return contentRepository.findByListId(listId);
+    }
+
+    public int countByListId(Long listId){
+        return contentRepository.countByListId(listId);
     }
 
 }

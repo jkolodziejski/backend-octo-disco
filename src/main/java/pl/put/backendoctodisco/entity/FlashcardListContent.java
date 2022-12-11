@@ -28,4 +28,9 @@ public class FlashcardListContent {
         flashcardId = request.flashcard_id;
         listId = request.list_id;
     }
+
+    public FlashcardListContent(Long listId, Long flashcardId) {
+        this.flashcardId = flashcardId;
+        this.listId = listId;
+    }
 }

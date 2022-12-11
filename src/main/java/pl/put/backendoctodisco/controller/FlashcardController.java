@@ -25,6 +25,7 @@ import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.utils.Language;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -87,7 +88,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Server error")
     })
     @DeleteMapping
-    private ResponseEntity<HttpStatus> deleteFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardDoesNotExistException, FlashcardNotAvailableException, ServerErrorException, ParameterIsMissingException {
+    private ResponseEntity<HttpStatus> deleteFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardDoesNotExistException, ServerErrorException, ParameterIsMissingException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if (flashcardId == null) {
@@ -99,7 +100,7 @@ public class FlashcardController {
         }
         //TODO admins can delete global cards
         if(found.get().getIsGlobal() || !Objects.equals(found.get().getUserId(), foundUser.getId())){
-            throw new FlashcardNotAvailableException();
+            throw new EntityNotAvailableException("flashcard");
         }
         //TODO needs to be cascading
         if(!flashcardService.deleteFlashcard(flashcardId)){
