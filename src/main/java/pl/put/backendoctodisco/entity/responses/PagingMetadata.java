@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class Metadata {
+public class PagingMetadata {
 
     @ApiModelProperty(notes = "Total number of element from this request", example = "1", required = true)
     private final Long size;
@@ -15,7 +15,7 @@ public class Metadata {
     @ApiModelProperty(notes = "Total number of pages from this request", example = "1", required = true)
     private final Integer totalNumberPages;
 
-    public Metadata(Long size, Integer totalNumberPages) {
+    public PagingMetadata(Long size, Integer totalNumberPages) {
         this.size = size;
         this.totalNumberPages = totalNumberPages;
     }
