@@ -69,7 +69,7 @@ public class FlashcardListController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ApiOperation(value = "Update flashcard list in the database",
-            notes = "Returns the updated flashcard list")
+            notes = "Returns status")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully updated"),
             @ApiResponse(code = 400, message = "List ID missing in params or list does not exists"),
