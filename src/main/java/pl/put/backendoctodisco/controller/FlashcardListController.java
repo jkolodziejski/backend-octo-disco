@@ -163,7 +163,7 @@ public class FlashcardListController {
             @ApiResponse(code = 403, message = "Token not found, token expired or user not authorized for the operation (error specified in the message)"),
             @ApiResponse(code = 409, message = "Flashcard is already present in the list.")
     })
-    @PostMapping("/add_card")
+    @PostMapping("/card")
     private ResponseEntity<FlashcardListContent> addFlashcardToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardAlreadyInListException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
@@ -200,7 +200,7 @@ public class FlashcardListController {
             @ApiResponse(code = 400, message = "Flashcard or list not found (error specified in the message)"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
-    @PostMapping("/add_cards")
+    @PostMapping("/cards")
     private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
