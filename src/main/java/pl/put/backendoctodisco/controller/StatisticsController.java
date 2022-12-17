@@ -9,10 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
+import pl.put.backendoctodisco.entity.TestStatistics;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.QuizResultRequest;
+import pl.put.backendoctodisco.entity.requests.TestResultRequest;
 import pl.put.backendoctodisco.entity.responses.CardListStatistics;
 import pl.put.backendoctodisco.entity.responses.FlashcardListsResponse;
+import pl.put.backendoctodisco.entity.responses.TestDifficultyStatistics;
 import pl.put.backendoctodisco.exceptions.ParameterIsMissingException;
 import pl.put.backendoctodisco.exceptions.TokenExpiredException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
@@ -67,10 +70,10 @@ public class StatisticsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Update statistics of flashcards",
-            notes = "Returns list statistics, take into account that endpoint does not check if flashcard is in flashcard list.")
+    @ApiOperation(value = "Gets statistics of flashcards",
+            notes = "Returns list statistics")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated statistics"),
+            @ApiResponse(code = 200, message = "Successfully found statistics"),
             @ApiResponse(code = 400, message = "List ID not passed"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
@@ -88,10 +91,10 @@ public class StatisticsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Update statistics of flashcards",
-            notes = "Returns list statistics, take into account that endpoint does not check if flashcard is in flashcard list.")
+    @ApiOperation(value = "Gets statistics of all flashcard lists",
+            notes = "Returns statistics of all flashcard lists")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated statistics"),
+            @ApiResponse(code = 200, message = "Successfully found statistics"),
             @ApiResponse(code = 400, message = "List ID not passed"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
@@ -107,5 +110,48 @@ public class StatisticsController {
         }).toList());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Update statistics of test",
+            notes = "Returns statistics for given difficulty.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated statistics"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @PostMapping("/test")
+    private ResponseEntity<TestDifficultyStatistics> sendTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody TestResultRequest testResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        statisticsService.updateStatistics(testResult, foundUser);
+
+        if(testResult.difficulty == null){
+            throw new ParameterIsMissingException("difficulty", "No statistics to find, but data updated.");
+        }
+
+        return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, testResult.difficulty), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Gets statistics for given difficulty",
+            notes = "Returns statistics for given difficulty.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully found statistics"),
+            @ApiResponse(code = 400, message = "Difficulty parameter not passed"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @GetMapping("/test")
+    private ResponseEntity<TestDifficultyStatistics> getTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Integer difficulty) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        if(difficulty == null){
+            throw new ParameterIsMissingException("difficulty");
+        }
+
+        return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, difficulty), HttpStatus.OK);
     }
 }
