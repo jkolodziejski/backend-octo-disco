@@ -43,7 +43,7 @@ public class StatisticsService {
         }
     }
 
-    public CardListStatistics findFlashcardListStatistics(User user, Long list_id){
+    public CardListStatistics findFlashcardListStatistics(User user, String listName, Long list_id){
         List<FlashcardListContent> listContent = listRepository.findByListId(list_id);
         List<Long> learned= new ArrayList<>();
         List<Long> notLearned= new ArrayList<>();
@@ -60,6 +60,6 @@ public class StatisticsService {
                 }
             }
         });
-        return new CardListStatistics(learned.size(), notLearned.size(), notAttempted.size());
+        return new CardListStatistics(listName, learned.size(), notLearned.size(), notAttempted.size());
     }
 }

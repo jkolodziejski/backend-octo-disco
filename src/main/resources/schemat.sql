@@ -86,4 +86,13 @@ CREATE TABLE flashcard_statistics(
 	CONSTRAINT fk_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE
 );
 
+CREATE TABLE test_statistics(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	question_id int,
+	user_id int,
+	learned number(1),
+	CONSTRAINT fk_teststat_question FOREIGN KEY(question_id) references question(id) ON DELETE CASCADE
+	CONSTRAINT fk_teststat_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE
+);
+
 

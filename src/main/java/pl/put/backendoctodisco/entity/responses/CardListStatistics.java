@@ -13,6 +13,10 @@ import java.util.List;
 @Getter
 public class CardListStatistics {
 
+    @ApiModelProperty(notes = "Flashcard list name", example="Pogoda",  required = false)
+    @Column(name = "name", nullable = true)
+    private final String name;
+
     @ApiModelProperty(notes = "Number of flashcard learned", example="3",  required = true)
     @Column(name = "learned", nullable = false)
     private final int learned;
@@ -25,7 +29,8 @@ public class CardListStatistics {
     @Column(name = "learned", nullable = false)
     private final int not_attempted;
 
-    public CardListStatistics(int learned, int not_learned, int not_attempted){
+    public CardListStatistics(String name, int learned, int not_learned, int not_attempted){
+        this.name = name;
         this.learned = learned;
         this.not_learned = not_learned;
         this.not_attempted = not_attempted;

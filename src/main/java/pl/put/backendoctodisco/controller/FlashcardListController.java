@@ -213,7 +213,6 @@ public class FlashcardListController {
             FlashcardListContent flashcardListContent = new FlashcardListContent(addToFlashcardListRequest.list_id, req);
             Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
-            //TODO not sure about the exceptions there
             if (flashcardListService.findListById(addToFlashcardListRequest.list_id).isEmpty()) {
                 throw new FlashcardListDoesNotExistException();
             }
@@ -242,7 +241,6 @@ public class FlashcardListController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/cards")
-    //TODO change return to ResponseEntity, correct the Swagger UI
     private AllFlashcardsResponse getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
