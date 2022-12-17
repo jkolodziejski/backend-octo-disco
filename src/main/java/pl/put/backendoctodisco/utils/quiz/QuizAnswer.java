@@ -14,15 +14,20 @@ import java.util.Random;
 @Getter
 public class QuizAnswer {
 
-    @ApiModelProperty(notes = "Flashcard with possible translations", required = true)
-    @Column(name = "flashcard", nullable = false)
+    @ApiModelProperty(notes = "ID of the flashcard used in question", required = true)
+    @Column(name = "flashcard_id", nullable = false)
+    private Long flashcard_id;
+
+    @ApiModelProperty(notes = "Word to be translated", required = true)
+    @Column(name = "word", nullable = false)
     private String word;
 
-    @ApiModelProperty(notes = "False options to choose from beside alias of the flashcard", example = "type", allowableValues = "type, choose, connect", required = true)
-    @Column(name = "false_options", nullable = false)
+    @ApiModelProperty(notes = "Correct translation", example = "type", allowableValues = "type, choose, connect", required = true)
+    @Column(name = "translation", nullable = false)
     private String translation;
 
     public QuizAnswer(FlashcardResponse flashcard){
+        this.flashcard_id = flashcard.getId();
         this.word = flashcard.getWord();
         List<String> alias = flashcard.getAlias();
         this.translation = alias.get(new Random().nextInt(alias.size()));

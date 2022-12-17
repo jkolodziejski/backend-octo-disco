@@ -29,7 +29,7 @@ public class TestTypeQuestionResponse extends TestQuestion {
     private String translationWord;
 
     public TestTypeQuestionResponse(TestTypeQuestion question){
-        super(TestQuestionType.TYPE.name());
+        super(question.getId(), TestQuestionType.TYPE.name().toLowerCase());
         this.sentence = question.getSentence();
         this.sentenceWord = question.getSentence_word();
         this.translation = question.getTranslation();

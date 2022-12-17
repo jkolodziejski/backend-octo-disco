@@ -23,7 +23,7 @@ public class TestChooseQuestionResponse extends TestQuestion {
     private List<String> wrongAnswers;
 
     public TestChooseQuestionResponse(TestChooseQuestion question){
-        super(TestQuestionType.CHOOSE.name());
+        super(question.getId(), TestQuestionType.CHOOSE.name().toLowerCase());
         this.sentence = question.getSentence();
         this.correctAnswer = question.getAnswer();
         wrongAnswers = new ArrayList<>();
