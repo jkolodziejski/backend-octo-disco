@@ -14,6 +14,10 @@ import java.util.List;
 @Getter
 public class QuizChooseQuestion extends QuizQuestion {
 
+    @ApiModelProperty(notes = "ID of the flashcard used in question", required = true)
+    @Column(name = "flashcard_id", nullable = false)
+    private Long flashcard_id;
+
     @ApiModelProperty(notes = "Flashcard word with one of the correct answers", required = true)
     @Column(name = "answer", nullable = false)
     private QuizAnswer answer;
@@ -23,7 +27,8 @@ public class QuizChooseQuestion extends QuizQuestion {
     private List<String> false_options;
 
     public QuizChooseQuestion(FlashcardResponse flashcard, List<String> falseOptions){
-        super(QuizQuestionType.CHOOSE.name());
+        super(QuizQuestionType.CHOOSE.name().toLowerCase());
+        this.flashcard_id = flashcard.getId();
         this.answer = new QuizAnswer(flashcard);
         this.false_options = falseOptions;
     }

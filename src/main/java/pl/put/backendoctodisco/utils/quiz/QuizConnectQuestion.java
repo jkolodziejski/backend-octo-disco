@@ -19,7 +19,7 @@ public class QuizConnectQuestion extends QuizQuestion {
     private List<QuizAnswer> answers;
 
     public QuizConnectQuestion(List<FlashcardResponse> flashcards){
-        super(QuizQuestionType.CONNECT.name());
+        super(QuizQuestionType.CONNECT.name().toLowerCase());
         this.answers = flashcards.stream().map(card -> new QuizAnswer(card)).toList();
     }
 
