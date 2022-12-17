@@ -46,7 +46,7 @@ public class TestController {
     @ApiOperation(value = "Get grammar test",
             notes = "Returns test")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully created test"),
+            @ApiResponse(code = 200, message = "Successfully found test"),
             @ApiResponse(code = 400, message = "Difficulty missing in request"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })

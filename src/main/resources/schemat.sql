@@ -81,7 +81,7 @@ CREATE TABLE flashcard_statistics(
 	id int AUTO_INCREMENT PRIMARY KEY,
 	flashcard_id int,
 	user_id int,
-	learned number(1),
+	learned tinyint(1),
 	CONSTRAINT fk_flashcard FOREIGN KEY(flashcard_id) references flashcard(id) ON DELETE CASCADE
 	CONSTRAINT fk_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE
 );
@@ -89,10 +89,11 @@ CREATE TABLE flashcard_statistics(
 CREATE TABLE test_statistics(
 	id int AUTO_INCREMENT PRIMARY KEY,
 	question_id int,
+	question_type varchar(10),
 	user_id int,
-	learned number(1),
-	CONSTRAINT fk_teststat_question FOREIGN KEY(question_id) references question(id) ON DELETE CASCADE
-	CONSTRAINT fk_teststat_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE
+	learned tinyint(1),
+	CONSTRAINT fk_teststats_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE,
+	CONSTRAINT chk_question_type CHECK(question_type in ('type', 'choose', 'order'))
 );
 
 
