@@ -3,15 +3,13 @@ package pl.put.backendoctodisco.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pl.put.backendoctodisco.entity.Alias;
-import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.entity.FlashcardListContent;
-import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.entity.*;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.repository.AliasRepository;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.FlashcardRepository;
+import pl.put.backendoctodisco.repository.StatsQuizRepository;
 import pl.put.backendoctodisco.utils.DictionaryChoice;
 
 import java.util.ArrayList;
@@ -25,11 +23,14 @@ public class FlashcardService {
     private final FlashcardRepository repository;
     private final FlashcardListContentRepository contentRepository;
     private final AliasRepository aliasRepository;
+    private final StatsQuizRepository quizStatsRepository;
 
-    public FlashcardService(FlashcardRepository repository, FlashcardListContentRepository contentRepository, AliasRepository aliasRepository) {
+
+    public FlashcardService(FlashcardRepository repository, FlashcardListContentRepository contentRepository, AliasRepository aliasRepository, StatsQuizRepository quizStatsRepository) {
         this.repository = repository;
         this.contentRepository = contentRepository;
         this.aliasRepository = aliasRepository;
+        this.quizStatsRepository = quizStatsRepository;
     }
 
     public Flashcard createFlashcard(Flashcard flashcard) {
@@ -105,5 +106,16 @@ public class FlashcardService {
             List<String> foundAlias = findAliasByWordId(it.getId());
             return new FlashcardResponse(it, foundAlias);
         }).toList();
+    }
+
+    public List<FlashcardResponse> getUnlearnedFlashcardsFromList(Long userId, Long listId){
+        List<FlashcardResponse> flashcards = getFlashcardsFromList(listId);
+        List<FlashcardResponse> unlearned = flashcards.stream().filter(card -> {
+            Optional<FlashcardStatistics> stat = quizStatsRepository.findByUserIdAndFlashcardId(userId, card.getId());
+            if(stat.isEmpty()) return true;
+            return !stat.get().getLearned();
+        }).toList();
+
+        return unlearned;
     }
 }
