@@ -49,6 +49,7 @@ public class QuizController {
 
         AuthToken.validateToken(foundUser);
 
+        //TODO quiz might be empty
         List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
         Quiz quiz = quizService.createQuizForCards(flashcards);
 
