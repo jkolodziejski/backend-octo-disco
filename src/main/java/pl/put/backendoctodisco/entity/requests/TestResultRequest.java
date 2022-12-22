@@ -11,11 +11,11 @@ public class TestResultRequest {
     @Column(name = "difficulty", nullable = true)
     public Integer difficulty;
 
-    @ApiModelProperty(notes = "IDs of flashcards answered correctly in quiz", example = "[21, 23, 24]", required = false)
+    @ApiModelProperty(notes = "IDs of flashcards answered correctly in quiz")
     @Column(name = "correct_id", nullable = false)
     public ArrayList<QuestionId> correct_id;
 
-    @ApiModelProperty(notes = "IDs of flashcards answered incorrectly in quiz", example = "[22, 25]", required = false)
+    @ApiModelProperty(notes = "IDs of flashcards answered incorrectly in quiz")
     @Column(name = "incorrect_id", nullable = false)
     public ArrayList<QuestionId> incorrect_id;
 }

@@ -63,6 +63,6 @@ public class TestController {
             size = 10;
         }
 
-        return new ResponseEntity<>(testService.createTest(difficulty, size), HttpStatus.OK);
+        return new ResponseEntity<>(testService.createTest(foundUser, difficulty, size), HttpStatus.OK);
     }
 }

@@ -49,7 +49,8 @@ public class QuizController {
 
         AuthToken.validateToken(foundUser);
 
-        List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
+        //TODO quiz might be empty
+        List<FlashcardResponse> flashcards = flashcardService.getUnlearnedFlashcardsFromList(foundUser.getId(), list_id);
         Quiz quiz = quizService.createQuizForCards(flashcards);
 
         //TODO no question type determined in response
