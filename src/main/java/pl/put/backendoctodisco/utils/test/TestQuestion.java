@@ -11,7 +11,7 @@ import javax.persistence.Column;
 @Getter
 public abstract class TestQuestion {
     @Column(name = "question_id", nullable = false)
-    private Long question_id;
+    public Long question_id;
 
     @ApiModelProperty(notes = "Type of the question", allowableValues = "type, choose, order", required = true)
     @Column(name = "question_type", nullable = false)
