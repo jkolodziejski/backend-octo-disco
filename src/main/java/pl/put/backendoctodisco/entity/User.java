@@ -30,6 +30,10 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @ApiModelProperty(notes = "Permissions of the user", example = "user", allowableValues = "[user, admin]")
+    @Column(name = "permissions")
+    private String permissions;
+
     @ApiModelProperty(notes = "Authorization token", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdfdXNlciIsInJvbGVzIjoidXNlciIsImlhdCI6MTY2Nzc1Njg4NiwiZXhwIjoxNjY3NzY3Njg2fQ.nK31xWzMEzhcxGpQj0QQQ6MbyLBxG5fTHIQ4S0nJ7w5_gN-vWaCDMt7RNt0YCI2k-hCGr6DvgIoaRn1kMD1V4Q")
     @Column(name = "auth_token")
     private String authToken;
@@ -38,5 +42,6 @@ public class User {
         this.login = registerRequest.login;
         this.email = registerRequest.email;
         this.password = registerRequest.password;
+        this.permissions="user";
     }
 }

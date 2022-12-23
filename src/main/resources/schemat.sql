@@ -3,6 +3,7 @@ CREATE TABLE USERS (
                        login varchar(50)  NOT NULL,
                        email varchar(50)  NOT NULL,
                        password varchar(200)  NOT NULL,
+                       permissions varchar(50),
                        PRIMARY KEY (id),
                        UNIQUE KEY (email),
                        UNIQUE KEY (login)
