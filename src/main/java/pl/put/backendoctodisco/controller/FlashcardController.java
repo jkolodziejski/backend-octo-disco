@@ -25,7 +25,6 @@ import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.utils.Language;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +53,7 @@ public class FlashcardController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Nonexistent language"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
-            @ApiResponse(code = 409, message = "Alias already exists")
+            @ApiResponse(code = 409, message = "Flashcard already exists")
     })
     @PostMapping
     private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
@@ -67,15 +66,15 @@ public class FlashcardController {
 
         List<Flashcard> filteredFlashcards = flashcardService.findInUsersDictionary(foundUser, flashcardRequest);
         if (!filteredFlashcards.isEmpty()) {
-            aliasService.checkAndcreateAlias(filteredFlashcards.get(0).getId(), flashcardRequest.translation);
-            flashcardResponse = flashcardService.getFlashcardWithAlias(filteredFlashcards.get(0));
-        } else {
-            Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
-            for (String aliasRest : flashcardRequest.translation) {
-                aliasService.createAlias(new Alias(aliasRest, createdFlashcard.getId()));
-            }
-            flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard);
+            aliasService.checkAlias(filteredFlashcards.get(0).getId(), flashcardRequest.translation);
         }
+
+        Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
+        for (String aliasRest : flashcardRequest.translation) {
+            aliasService.createAlias(new Alias(aliasRest, createdFlashcard.getId()));
+        }
+        flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard);
+
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
     }
 

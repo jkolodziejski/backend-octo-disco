@@ -2,12 +2,9 @@ package pl.put.backendoctodisco.service;
 
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.Alias;
-import pl.put.backendoctodisco.entity.Flashcard;
-import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
 import pl.put.backendoctodisco.exceptions.FlashcardAlreadyExistsException;
 import pl.put.backendoctodisco.repository.AliasRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,7 +24,7 @@ public class AliasService {
         return repository.findByWordId(word_id);
     }
 
-    public void checkAndcreateAlias(Long word_id, List<String> aliases) throws FlashcardAlreadyExistsException {
+    public void checkAlias(Long word_id, List<String> aliases) throws FlashcardAlreadyExistsException {
         List<Alias> foundAlias = findByWordId(word_id);
         for (String aliasReq : aliases) {
             List<Alias> filteredAlias = foundAlias
@@ -37,7 +34,6 @@ public class AliasService {
             if (!filteredAlias.isEmpty()) {
                 throw new FlashcardAlreadyExistsException();
             }
-            createAlias(new Alias(aliasReq, word_id));
         }
     }
 
