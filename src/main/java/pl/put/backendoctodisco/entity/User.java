@@ -18,6 +18,8 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
+
+
     @ApiModelProperty(notes = "User login", example = "sample", required = true)
     @Column(name = "login", nullable = false)
     private String login;

@@ -96,4 +96,13 @@ CREATE TABLE test_statistics(
 	CONSTRAINT chk_question_type CHECK(question_type in ('type', 'choose', 'order'))
 );
 
+CREATE TABLE difficulty_level(
+	id int AUTO_INCREMENT PRIMARY KEY,
+	language varchar(100),
+	name varchar(100),
+	difficulty int,
+	exp_needed int,
+	CONSTRAINT chk_test_language CHECK(language in ('en'))
+);
+
 

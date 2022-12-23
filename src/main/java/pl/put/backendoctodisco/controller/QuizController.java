@@ -49,11 +49,10 @@ public class QuizController {
 
         AuthToken.validateToken(foundUser);
 
-        //TODO quiz might be empty
+        //TODO quiz might be empty if all flashcards learned
         List<FlashcardResponse> flashcards = flashcardService.getUnlearnedFlashcardsFromList(foundUser.getId(), list_id);
         Quiz quiz = quizService.createQuizForCards(flashcards);
 
-        //TODO no question type determined in response
         return new ResponseEntity<>(quiz, HttpStatus.OK);
     }
 }
