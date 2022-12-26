@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Alias;
 import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.entity.requests.AddAliasRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 import pl.put.backendoctodisco.entity.responses.AllFlashcardsResponse;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
@@ -109,43 +110,6 @@ public class FlashcardController {
         return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
     }
 
-    /*
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get flashcards from database with all alias paged",
-            notes = "Returns list of flashcard, alias and metadata")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "The resource has been fetched and transmitted in the message body"),
-            @ApiResponse(code = 400, message = "Wrong request"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
-    })
-    @GetMapping("/all")
-    private ResponseEntity<AllFlashcardsResponse> getFlashcards(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, String choice, @PageableDefault(value = 25) Pageable pageable, String language) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, NonexistentLanguageException, NonexistentChoiceException {
-        User foundUser = userService.findUserByAuthToken(authToken);
-        AuthToken.validateToken(foundUser);
-        if (language == null || choice == null) {
-            throw new ParameterIsMissingException();
-        }
-        if (!Choice.contains(choice)) {
-            throw new NonexistentChoiceException();
-        }
-        if (!Language.contains(language)) {
-            throw new NonexistentLanguageException();
-        }
-
-        Page<Flashcard> flashcardList;
-        if (Choice.valueOf(choice.toUpperCase()).equals(Choice.GLOBAL)) {
-            flashcardList = flashcardService.getAllFlashcardsGlobal(pageable, language);
-        } else if (Choice.valueOf(choice.toUpperCase()).equals(Choice.LOCAL)) {
-            flashcardList = flashcardService.getFlashcardsUser(foundUser.getId(), pageable, language);
-        } else {
-            flashcardList = flashcardService.getAllFlashcards(pageable);
-        }
-
-        return new ResponseEntity<>(getListFlashcardsWithAlias(flashcardList), HttpStatus.OK);
-    }
-
-
-     */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get flashcards from database by keyword with all alias paged",
             notes = "Returns pages of flashcard, alias and metadata")
@@ -195,5 +159,43 @@ public class FlashcardController {
         }
 
         return new AllFlashcardsResponse(flashcardListWithAlias, flashcards);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Add a new flashcard to database",
+            notes = "Returns the created flashcard")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created"),
+            @ApiResponse(code = 400, message = "Nonexistent flashcard"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message), flashcard not available for user"),
+            @ApiResponse(code = 409, message = "Flashcard already exists")
+    })
+    @PutMapping("/translations")
+    private ResponseEntity<FlashcardResponse> addAliasFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddAliasRequest alias_request) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, FlashcardDoesNotExistException, EntityNotAvailableException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        aliasService.checkAlias(alias_request.flashcard_id, alias_request.translation);
+
+        Optional<Flashcard> createdFlashcard = flashcardService.findById(alias_request.flashcard_id);
+        if(createdFlashcard.isEmpty()){
+            throw new FlashcardDoesNotExistException();
+        }
+        if(createdFlashcard.get().getIsGlobal()){
+            if(!Objects.equals(foundUser.getPermissions(), "admin")){
+                throw new EntityNotAvailableException("global flashcard");
+            }
+        }else{
+            if(!Objects.equals(createdFlashcard.get().getUserId(), foundUser.getId())){
+                throw new EntityNotAvailableException("flashcard");
+            }
+        }
+        for (String aliasRest : alias_request.translation) {
+            aliasService.createAlias(new Alias(aliasRest, createdFlashcard.get().getId()));
+        }
+        FlashcardResponse flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard.get());
+
+        return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
     }
 }
