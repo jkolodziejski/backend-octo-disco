@@ -162,8 +162,8 @@ public class FlashcardController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Add a new flashcard to database",
-            notes = "Returns the created flashcard")
+    @ApiOperation(value = "Add a new aliases to the flashcard",
+            notes = "Returns the updated flashcard")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Nonexistent flashcard"),
