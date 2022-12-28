@@ -16,10 +16,7 @@ import pl.put.backendoctodisco.entity.requests.TestResultRequest;
 import pl.put.backendoctodisco.entity.responses.CardListStatistics;
 import pl.put.backendoctodisco.entity.responses.FlashcardListsResponse;
 import pl.put.backendoctodisco.entity.responses.TestDifficultyStatistics;
-import pl.put.backendoctodisco.exceptions.ParameterIsMissingException;
-import pl.put.backendoctodisco.exceptions.TokenExpiredException;
-import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
-import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
+import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.FlashcardListService;
 import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.StatisticsService;
@@ -153,5 +150,30 @@ public class StatisticsController {
         }
 
         return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, difficulty), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Gets statistics of flashcards",
+            notes = "Returns list statistics")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted statistics"),
+            @ApiResponse(code = 400, message = "List ID not passed"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
+            @ApiResponse(code = 409, message = "Server error")
+    })
+    @DeleteMapping("/list")
+    private ResponseEntity<HttpStatus> deleteCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, ServerErrorException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        if(list_id == null){
+            throw new ParameterIsMissingException("list_id");
+        }
+        if(!statisticsService.deleteFlashcardListStatistics(foundUser, list_id)){
+            throw new ServerErrorException("Problem deleting statistics, but some might have been deleted.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
     }
 }

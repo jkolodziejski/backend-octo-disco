@@ -96,6 +96,22 @@ public class StatisticsService {
         return new CardListStatistics(listName, learned.size(), notLearned.size(), notAttempted.size());
     }
 
+    public boolean deleteFlashcardListStatistics(User user, Long list_id){
+        List<FlashcardListContent> listContent = listRepository.findByListId(list_id);
+        List<FlashcardStatistics> stats = listContent.stream()
+                .map(card -> quizRepository.findByUserIdAndFlashcardId(user.getId(), card.getFlashcardId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+        boolean allDeleted = true;
+        for (FlashcardStatistics stat : stats) {
+            if (quizRepository.deleteById(stat.getId()) == 0) {
+                allDeleted = false;
+            }
+        }
+        return allDeleted;
+    }
+
     public TestDifficultyStatistics findTestStatistics(User user, Integer difficulty){
         List<QuestionId> questions = new ArrayList<>();
         testTypeRepository.findByDifficulty(difficulty).forEach(question -> questions.add(new QuestionId(question.getId(), "type")));
