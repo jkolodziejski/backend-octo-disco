@@ -40,7 +40,7 @@ public class QuizService {
         return alias;
     }
 
-    public Quiz createQuizForCards(List<FlashcardResponse> flashcards){
+    public Quiz createQuizForCards(List<FlashcardResponse> flashcards, List<FlashcardResponse> learnedFlashcards){
 //        Collections.shuffle(flashcards);
         List<QuizQuestion> questions = new ArrayList<>();
         int cardsUsed=0;
@@ -54,7 +54,7 @@ public class QuizService {
 
         nrOfQuestions = (flashcards.size()-cardsUsed)/(1+(QuizQuestionType.usedCards(QuizQuestionType.CHOOSE)/QuizQuestionType.usedCards(QuizQuestionType.TYPE)));
         for(int i=cardsUsed; i<nrOfQuestions+cardsUsed; i++){
-            questions.add(new QuizChooseQuestion(flashcards.get(i), getAliasBeside(flashcards,flashcards.get(i)).subList(0,3)));
+            questions.add(new QuizChooseQuestion(flashcards.get(i), getAliasBeside(learnedFlashcards,flashcards.get(i)).subList(0,3)));
         }
         cardsUsed+=nrOfQuestions;
 
