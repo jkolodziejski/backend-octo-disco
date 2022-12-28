@@ -21,12 +21,12 @@ public class FlashcardListInfo {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ApiModelProperty(notes = "Flashcard list name", example = "Monday exam - phrases", required = true)
+    @ApiModelProperty(notes = "Flashcard list name", example = "Monday exam", required = true)
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ApiModelProperty(notes = "Flashcard list name", example = "Monday exam - phrases", required = true)
-    @Column(name = "description", nullable = false)
+    @ApiModelProperty(notes = "Flashcard list description", example = "Food phrases")
+    @Column(name = "description")
     private String description;
 
     public FlashcardListInfo(User user, FlashcardListRequest flashcardListRequest) {
