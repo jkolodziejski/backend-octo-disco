@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.put.backendoctodisco.entity.FlashcardListContent;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -16,4 +17,7 @@ public interface FlashcardListContentRepository extends JpaRepository<FlashcardL
     List<FlashcardListContent> findByListId(Long listId);
 
     int countByListId(Long listId);
+
+    @Transactional
+    long deleteById(Long id);
 }

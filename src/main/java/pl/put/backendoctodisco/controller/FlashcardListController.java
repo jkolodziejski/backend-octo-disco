@@ -11,7 +11,7 @@ import pl.put.backendoctodisco.entity.Flashcard;
 import pl.put.backendoctodisco.entity.FlashcardListContent;
 import pl.put.backendoctodisco.entity.FlashcardListInfo;
 import pl.put.backendoctodisco.entity.User;
-import pl.put.backendoctodisco.entity.requests.AddListToFlashcardListRequest;
+import pl.put.backendoctodisco.entity.requests.UpdateFlashcardsInListRequest;
 import pl.put.backendoctodisco.entity.requests.AddToFlashcardListRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardListRequest;
 import pl.put.backendoctodisco.entity.responses.AllFlashcardsResponse;
@@ -201,21 +201,22 @@ public class FlashcardListController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/cards")
-    private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddListToFlashcardListRequest addToFlashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, EntityNotAvailableException {
+    private ResponseEntity<ArrayList<FlashcardListContent>> addFlashcardsToList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody UpdateFlashcardsInListRequest request) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListDoesNotExistException, FlashcardDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
         ArrayList<FlashcardListContent> response = new ArrayList<>();
 
-        for (Long req : addToFlashcardListRequest.flashcard_ids) {
+        if (flashcardListService.findListById(request.list_id).isEmpty()) {
+            throw new FlashcardListDoesNotExistException();
+        }
 
-            FlashcardListContent flashcardListContent = new FlashcardListContent(addToFlashcardListRequest.list_id, req);
+        for (Long req : request.flashcard_ids) {
+
+            FlashcardListContent flashcardListContent = new FlashcardListContent(request.list_id, req);
             Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
 
-            if (flashcardListService.findListById(addToFlashcardListRequest.list_id).isEmpty()) {
-                throw new FlashcardListDoesNotExistException();
-            }
             Optional<Flashcard> foundFlashcard = flashcardService.findById(req);
             if (foundFlashcard.isEmpty()) {
                 throw new FlashcardDoesNotExistException();
@@ -231,6 +232,38 @@ public class FlashcardListController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete flashcard with all its data from database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted"),
+            @ApiResponse(code = 400, message = "Nonexistent flashcard list"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or flashcard list not available"),
+            @ApiResponse(code = 409, message = "Server error")
+    })
+    @DeleteMapping("/cards")
+    private ResponseEntity<HttpStatus> deleteFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody UpdateFlashcardsInListRequest request) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ServerErrorException, ParameterIsMissingException, FlashcardListDoesNotExistException, FlashcardListNotAvailableException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+
+        ArrayList<FlashcardListContent> response = new ArrayList<>();
+
+        if (flashcardListService.findListById(request.list_id).isEmpty()) {
+            throw new FlashcardListDoesNotExistException();
+        }
+
+        for (Long req : request.flashcard_ids) {
+
+            FlashcardListContent flashcardListContent = new FlashcardListContent(request.list_id, req);
+            Optional<FlashcardListContent> foundFlashcardListContent = flashcardListService.findCardInList(flashcardListContent);
+
+            if(!flashcardListService.deleteFromList(foundFlashcardListContent.get().getId())){
+                throw new ServerErrorException("Problem deleting flashcard list, but some might have been deleted.");
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

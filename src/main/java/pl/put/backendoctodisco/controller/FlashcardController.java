@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.put.backendoctodisco.entity.Alias;
 import pl.put.backendoctodisco.entity.Flashcard;
+import pl.put.backendoctodisco.entity.FlashcardListInfo;
 import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.AddAliasRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
