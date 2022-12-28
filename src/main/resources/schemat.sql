@@ -4,6 +4,7 @@ CREATE TABLE USERS (
                        email varchar(50)  NOT NULL,
                        password varchar(200)  NOT NULL,
                        permissions varchar(50),
+                       exp int default 0,
                        PRIMARY KEY (id),
                        UNIQUE KEY (email),
                        UNIQUE KEY (login)
@@ -96,5 +97,3 @@ CREATE TABLE test_statistics(
 	CONSTRAINT fk_teststats_user FOREIGN KEY(user_id) references user(id) ON DELETE CASCADE,
 	CONSTRAINT chk_question_type CHECK(question_type in ('type', 'choose', 'order'))
 );
-
-

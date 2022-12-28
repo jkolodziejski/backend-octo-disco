@@ -69,5 +69,4 @@ public class UserController {
         return new ResponseEntity<>(new LoginResponse(foundUser.getPermissions(), token.toString()), HttpStatus.CREATED);
     }
 
-
 }

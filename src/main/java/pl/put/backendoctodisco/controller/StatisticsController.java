@@ -128,7 +128,10 @@ public class StatisticsController {
             throw new ParameterIsMissingException("difficulty", "No statistics to find, but data updated.");
         }
 
-        return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, testResult.difficulty), HttpStatus.OK);
+        TestDifficultyStatistics statistics = statisticsService.findTestStatistics(foundUser, testResult.difficulty);
+
+
+        return new ResponseEntity<>(statistics, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

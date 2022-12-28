@@ -25,4 +25,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("update User u set u.authToken = ?1 where u.id = ?2")
     void setUserInfoById(String authToken, Long id);
 
+    @Modifying
+    @Query(value = "update user u set u.exp = u.exp + ?2 where u.id = ?1", nativeQuery = true)
+    void addExpToUser(Long id, int exp);
 }

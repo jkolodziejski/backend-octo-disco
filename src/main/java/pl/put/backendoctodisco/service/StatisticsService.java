@@ -12,11 +12,11 @@ import pl.put.backendoctodisco.entity.responses.TestDifficultyStatistics;
 import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
 import pl.put.backendoctodisco.repository.StatsQuizRepository;
 import pl.put.backendoctodisco.repository.StatsTestRepository;
+import pl.put.backendoctodisco.repository.UserRepository;
 import pl.put.backendoctodisco.repository.test_repository.TestChooseRepository;
 import pl.put.backendoctodisco.repository.test_repository.TestOrderQuestionRepository;
 import pl.put.backendoctodisco.repository.test_repository.TestTypeRepository;
 import pl.put.backendoctodisco.utils.QuestionId;
-import pl.put.backendoctodisco.utils.test.TestQuestion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,7 @@ import java.util.Optional;
 @Service
 public class StatisticsService {
 
+    private final UserRepository userRepository;
     private final StatsQuizRepository quizRepository;
     private final StatsTestRepository statsTestRepository;
     private final TestTypeRepository testTypeRepository;
@@ -33,7 +34,8 @@ public class StatisticsService {
     private final TestOrderQuestionRepository testOrderRepository;
     private final FlashcardListContentRepository listRepository;
 
-    public StatisticsService(StatsQuizRepository quizRepository, StatsTestRepository statsTestRepository, TestTypeRepository testTypeRepository, TestChooseRepository testChooseRepository, TestOrderQuestionRepository testOrderRepository, FlashcardListContentRepository listRepository) {
+    public StatisticsService(UserRepository userRepository, StatsQuizRepository quizRepository, StatsTestRepository statsTestRepository, TestTypeRepository testTypeRepository, TestChooseRepository testChooseRepository, TestOrderQuestionRepository testOrderRepository, FlashcardListContentRepository listRepository) {
+        this.userRepository = userRepository;
         this.quizRepository = quizRepository;
         this.statsTestRepository = statsTestRepository;
         this.testTypeRepository = testTypeRepository;
@@ -60,13 +62,17 @@ public class StatisticsService {
     }
 
     public void updateStatistics(TestResultRequest testResult, User user){
+        int expGained=0;
         if(testResult.correct_id != null) {
-            testResult.correct_id.forEach( qid -> {
-                if (statsTestRepository.updateTest(user.getId(), qid.id, qid.type, true)<1) {
+            for(QuestionId qid : testResult.correct_id) {
+                expGained+=15;
+                if (statsTestRepository.updateTest(user.getId(), qid.id, qid.type, true) < 1) {
                     statsTestRepository.save(new TestStatistics(user, qid, true));
+                    expGained+=10;
                 }
-            });
+            }
         }
+        userRepository.addExpToUser(user.getId(), expGained);
         if(testResult.incorrect_id != null) {
             testResult.incorrect_id.forEach( qid -> {
                 if (statsTestRepository.findByUserIdAndQuestionId(user.getId(), qid.id, qid.type).isEmpty()) {
