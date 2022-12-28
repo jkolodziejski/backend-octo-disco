@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
         User createdUser = userService.createUser(new User(registerRequest));
         AuthToken token = userService.authorizeUser(createdUser);
-        return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new LoginResponse(createdUser.getPermissions(), token.toString()), HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,9 +65,8 @@ public class UserController {
             throw new WrongPasswordException();
         }
 
-
         AuthToken token = userService.authorizeUser(foundUser);
-        return new ResponseEntity<>(new LoginResponse(token.toString()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new LoginResponse(foundUser.getPermissions(), token.toString()), HttpStatus.CREATED);
     }
 
 
