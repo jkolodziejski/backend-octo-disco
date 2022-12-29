@@ -120,9 +120,10 @@ public class StatisticsService {
 
     public TestDifficultyStatistics findTestStatistics(User user, Integer difficulty){
         List<QuestionId> questions = new ArrayList<>();
-        testTypeRepository.findByDifficulty(difficulty).forEach(question -> questions.add(new QuestionId(question.getId(), "type")));
-        testChooseRepository.findByDifficulty(difficulty).forEach(question -> questions.add(new QuestionId(question.getId(), "choose")));
-        testOrderRepository.findByDifficulty(difficulty).forEach(question -> questions.add(new QuestionId(question.getId(), "order")));
+        Long level = difficulty.longValue();
+        testTypeRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "type")));
+        testChooseRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "choose")));
+        testOrderRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "order")));
 
         List<Long> learned= new ArrayList<>();
         List<Long> notLearned= new ArrayList<>();

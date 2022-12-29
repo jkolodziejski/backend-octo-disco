@@ -16,11 +16,8 @@ public class TestOrderQuestion {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "language", nullable = false)
-    private String language;
-
-    @Column(name = "difficulty", nullable = false)
-    private Integer difficulty;
+    @Column(name = "difficulty_id", nullable = false)
+    private Long difficulty_id;
 
     @Column(name = "sentence", nullable = false)
     private String sentence;

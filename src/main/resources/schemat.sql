@@ -44,31 +44,31 @@ CREATE TABLE ALIAS(
 
 CREATE TABLE test_type_question(
 	id int AUTO_INCREMENT PRIMARY KEY,
-	language varchar(100),
-	difficulty int,
+	difficulty_int int,
 	sentence varchar(255),
 	sentence_word varchar(100),
 	translation varchar(255),
-	translation_word varchar(100)
+	translation_word varchar(100),
+	CONSTRAINT fk_typeq_difficulty FOREIGN KEY(difficulty_id) references difficulty_level(id)
 );
 
 CREATE TABLE test_choose_question(
 	id int AUTO_INCREMENT PRIMARY KEY,
-	language varchar(100),
 	difficulty int,
 	sentence varchar(255),
 	answer varchar(100),
 	false_option_1 varchar(100),
 	false_option_2 varchar(100),
 	false_option_3 varchar(100),
-	false_option_4 varchar(100)
+	false_option_4 varchar(100),
+	CONSTRAINT fk_chooseq_difficulty FOREIGN KEY(difficulty_id) references difficulty_level(id)
 );
 
 CREATE TABLE test_order_question(
 	id int AUTO_INCREMENT PRIMARY KEY,
-	language varchar(100),
-	difficulty int,
-	sentence varchar(255)
+	difficulty_id int,
+	sentence varchar(255),
+	CONSTRAINT fk_orderq_difficulty FOREIGN KEY(difficulty_id) references difficulty_level(id)
 );
 
 CREATE TABLE test_order_answer(

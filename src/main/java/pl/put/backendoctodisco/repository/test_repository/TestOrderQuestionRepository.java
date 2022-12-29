@@ -2,9 +2,9 @@ package pl.put.backendoctodisco.repository.test_repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pl.put.backendoctodisco.entity.test_entity.TestChooseQuestion;
 import pl.put.backendoctodisco.entity.test_entity.TestOrderQuestion;
 
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface TestOrderQuestionRepository extends JpaRepository<TestOrderQuestion, Integer> {
 
-    List<TestOrderQuestion> findByDifficulty(Integer difficulty);
+    @Query(value = "SELECT * FROM test_order_question l WHERE l.difficulty_id = ?1", nativeQuery = true)
+    List<TestOrderQuestion> findByDifficultyId(Long difficulty_id);
 
 }

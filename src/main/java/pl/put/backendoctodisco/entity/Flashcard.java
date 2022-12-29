@@ -29,10 +29,6 @@ public class Flashcard {
     @Column(name = "word", nullable = false)
     private String word;
 
-//    @ApiModelProperty(notes = "Translation of the word to polish", example = "Polska", required = true)
-//    @Column(name = "translation", nullable = false)
-//    private String translation;
-
     @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0", required = true)
     @Column(name = "is_global", nullable = false)
     private Boolean isGlobal;
