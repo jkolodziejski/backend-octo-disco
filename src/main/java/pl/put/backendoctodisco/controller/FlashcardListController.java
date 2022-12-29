@@ -74,11 +74,10 @@ public class FlashcardListController {
             @ApiResponse(code = 201, message = "Successfully updated"),
             @ApiResponse(code = 400, message = "List ID missing in params or list does not exists"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message) or list not available"),
-            @ApiResponse(code = 409, message = "Flashcard list already exists."),
             @ApiResponse(code = 500, message = "Flashcard not in database.")
     })
     @PutMapping
-    private ResponseEntity<HttpStatus> updateFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id, @RequestBody FlashcardListRequest flashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardListAlreadyExistsException, ParameterIsMissingException, FlashcardListDoesNotExistException, EntityNotAvailableException, SomethingWentWrongException {
+    private ResponseEntity<HttpStatus> updateFlashcardList(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id, @RequestBody FlashcardListRequest flashcardListRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, FlashcardListDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -95,11 +94,6 @@ public class FlashcardListController {
             throw new EntityNotAvailableException("flashcard list");
         }
         flashcardListService.updateFlashcardList(list_id, new FlashcardListInfo(foundUser, flashcardListRequest));
-//        Optional<FlashcardListInfo> updatedFlashcardList = flashcardListService.findListById(list_id);
-
-//        if(updatedFlashcardList.isEmpty()){
-//            throw new SomethingWentWrongException();
-//        }
 
         return new ResponseEntity<>(HttpStatus.ACCEPTED, HttpStatus.ACCEPTED);
     }

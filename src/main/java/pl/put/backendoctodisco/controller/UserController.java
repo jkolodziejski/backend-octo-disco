@@ -11,12 +11,10 @@ import pl.put.backendoctodisco.entity.User;
 import pl.put.backendoctodisco.entity.requests.LoginRequest;
 import pl.put.backendoctodisco.entity.requests.RegisterRequest;
 import pl.put.backendoctodisco.entity.responses.LoginResponse;
-import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
-import pl.put.backendoctodisco.exceptions.UserNotFoundException;
-import pl.put.backendoctodisco.exceptions.WrongPasswordException;
+import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
+import pl.put.backendoctodisco.utils.Hash256;
 
 import java.util.Optional;
 
@@ -54,14 +52,20 @@ public class UserController {
             @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, WrongPasswordException {
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, WrongPasswordException, SomethingWentWrongException {
         Optional<User> userToCheck = userService.findByLogin(loginRequest.login);
         if (userToCheck.isEmpty()) {
             throw new UserNotFoundException();
         }
 
+        final boolean passwordHash = false;
+
         User foundUser = userToCheck.get();
-        if (!foundUser.getPassword().equals(loginRequest.password)) {
+        String password = foundUser.getPassword();
+        if(passwordHash){
+            password = Hash256.password(password);
+        }
+        if (!password.equals(loginRequest.password)) {
             throw new WrongPasswordException();
         }
 
