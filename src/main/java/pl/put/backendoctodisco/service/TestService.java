@@ -43,6 +43,10 @@ public class TestService {
         return new ArrayList<>(levelRepository.findByLanguage(language));
     }
 
+    public Optional<DifficultyLevel> getLevel(Long id){
+        return levelRepository.findById(id);
+    }
+
 //    public Test createTest(Integer difficulty, Integer size){
 //        List<TestQuestion> questions = new ArrayList<>();
 //        Integer typeSize = size/3;

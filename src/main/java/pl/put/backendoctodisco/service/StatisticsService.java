@@ -118,12 +118,11 @@ public class StatisticsService {
         return allDeleted;
     }
 
-    public TestDifficultyStatistics findTestStatistics(User user, Integer difficulty){
+    public TestDifficultyStatistics findTestStatistics(User user, Long difficultyId){
         List<QuestionId> questions = new ArrayList<>();
-        Long level = difficulty.longValue();
-        testTypeRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "type")));
-        testChooseRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "choose")));
-        testOrderRepository.findByDifficultyId(level).forEach(question -> questions.add(new QuestionId(question.getId(), "order")));
+        testTypeRepository.findByDifficultyId(difficultyId).forEach(question -> questions.add(new QuestionId(question.getId(), "type")));
+        testChooseRepository.findByDifficultyId(difficultyId).forEach(question -> questions.add(new QuestionId(question.getId(), "choose")));
+        testOrderRepository.findByDifficultyId(difficultyId).forEach(question -> questions.add(new QuestionId(question.getId(), "order")));
 
         List<Long> learned= new ArrayList<>();
         List<Long> notLearned= new ArrayList<>();
@@ -140,6 +139,6 @@ public class StatisticsService {
                 }
             }
         });
-        return new TestDifficultyStatistics(difficulty, learned.size(), notLearned.size(), notAttempted.size());
+        return new TestDifficultyStatistics(difficultyId, learned.size(), notLearned.size(), notAttempted.size());
     }
 }

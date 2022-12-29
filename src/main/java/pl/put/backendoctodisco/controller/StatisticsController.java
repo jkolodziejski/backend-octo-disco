@@ -111,7 +111,7 @@ public class StatisticsController {
 
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Update statistics of test",
-            notes = "Returns statistics for given difficulty.")
+            notes = "Returns statistics for given difficulty level.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated statistics"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
@@ -124,35 +124,35 @@ public class StatisticsController {
 
         statisticsService.updateStatistics(testResult, foundUser);
 
-        if(testResult.difficulty == null){
-            throw new ParameterIsMissingException("difficulty", "No statistics to find, but data updated.");
+        if(testResult.difficulty_id == null){
+            throw new ParameterIsMissingException("difficulty_id", "No statistics to find, but data updated.");
         }
 
-        TestDifficultyStatistics statistics = statisticsService.findTestStatistics(foundUser, testResult.difficulty);
+        TestDifficultyStatistics statistics = statisticsService.findTestStatistics(foundUser, testResult.difficulty_id);
 
 
         return new ResponseEntity<>(statistics, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Gets statistics for given difficulty",
-            notes = "Returns statistics for given difficulty.")
+    @ApiOperation(value = "Gets statistics for given difficulty level",
+            notes = "Returns statistics for given difficulty level.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully found statistics"),
             @ApiResponse(code = 400, message = "Difficulty parameter not passed"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/test")
-    private ResponseEntity<TestDifficultyStatistics> getTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Integer difficulty) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<TestDifficultyStatistics> getTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
 
-        if(difficulty == null){
-            throw new ParameterIsMissingException("difficulty");
+        if(difficulty_id == null){
+            throw new ParameterIsMissingException("difficulty_id");
         }
 
-        return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, difficulty), HttpStatus.OK);
+        return new ResponseEntity<>(statisticsService.findTestStatistics(foundUser, difficulty_id), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

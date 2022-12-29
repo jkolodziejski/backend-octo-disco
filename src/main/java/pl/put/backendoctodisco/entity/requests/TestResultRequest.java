@@ -7,9 +7,9 @@ import javax.persistence.Column;
 import java.util.ArrayList;
 
 public class TestResultRequest {
-    @ApiModelProperty(notes = "Difficulty of the test", example="1",  required = false)
-    @Column(name = "difficulty", nullable = true)
-    public Integer difficulty;
+    @ApiModelProperty(notes = "Difficulty ID of the tests level", example="1",  required = false)
+    @Column(name = "difficulty_id", nullable = true)
+    public Long difficulty_id;
 
     @ApiModelProperty(notes = "IDs of flashcards answered correctly in quiz")
     @Column(name = "correct_id", nullable = false)

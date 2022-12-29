@@ -27,6 +27,7 @@ import pl.put.backendoctodisco.utils.test.TestQuestion;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -47,11 +48,11 @@ public class TestController {
             notes = "Returns test")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully found test"),
-            @ApiResponse(code = 400, message = "Difficulty missing in request"),
+            @ApiResponse(code = 400, message = "Difficulty ID missing in request or not existing in database, possibly not enough exp"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping
-    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id, @RequestParam(name = "size", required = false) Integer size) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id, @RequestParam(name = "size", required = false) Integer size) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, EntityDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -61,6 +62,13 @@ public class TestController {
         }
         if(size == null){
             size = 10;
+        }
+        Optional<DifficultyLevel> level = testService.getLevel(difficulty_id);
+        if(level.isEmpty()){
+            throw new EntityDoesNotExistException("Difficulty level");
+        }
+        if(level.get().getExp_needed() > foundUser.getExp()){
+            throw new EntityNotAvailableException("difficulty level");
         }
 
         return new ResponseEntity<>(testService.createTest(foundUser, difficulty_id, size), HttpStatus.OK);
@@ -90,5 +98,21 @@ public class TestController {
         ArrayList<TestLevel> difficultyLevels = new ArrayList<>( testService.getLevels(language).stream().map(TestLevel::new).toList() );
 
         return new ResponseEntity<>(difficultyLevels, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get users exp",
+            notes = "Returns just exp")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully found users exp"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @GetMapping("/exp")
+    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+        User foundUser = userService.findUserByAuthToken(authToken);
+
+        AuthToken.validateToken(foundUser);
+
+        return new ResponseEntity<>(foundUser.getExp(), HttpStatus.OK);
     }
 }

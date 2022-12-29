@@ -38,10 +38,15 @@ public class User {
     @Column(name = "auth_token")
     private String authToken;
 
+    @ApiModelProperty(notes = "Exp points for english tests", example = "1250", required = true)
+    @Column(name = "exp")
+    private Integer exp;
+
     public User(RegisterRequest registerRequest) {
         this.login = registerRequest.login;
         this.email = registerRequest.email;
         this.password = registerRequest.password;
         this.permissions="user";
+        this.exp=0;
     }
 }

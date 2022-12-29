@@ -11,11 +11,14 @@ import pl.put.backendoctodisco.entity.FlashcardListInfo;
 import pl.put.backendoctodisco.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Repository
 public interface DifficultyLevelRepository extends JpaRepository<DifficultyLevel, Integer> {
 
     List<DifficultyLevel> findByLanguage(String language);
+
+    Optional<DifficultyLevel> findById(Long id);
 
 }
