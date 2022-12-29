@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.*;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
-import pl.put.backendoctodisco.repository.AliasRepository;
-import pl.put.backendoctodisco.repository.FlashcardListContentRepository;
-import pl.put.backendoctodisco.repository.FlashcardRepository;
-import pl.put.backendoctodisco.repository.StatsQuizRepository;
+import pl.put.backendoctodisco.entity.responses.SingleTranslation;
+import pl.put.backendoctodisco.repository.*;
 import pl.put.backendoctodisco.utils.DictionaryChoice;
 
 import java.util.ArrayList;
@@ -24,13 +22,15 @@ public class FlashcardService {
     private final FlashcardListContentRepository contentRepository;
     private final AliasRepository aliasRepository;
     private final StatsQuizRepository quizStatsRepository;
+    private final SingleTranslationRepository translationRepository;
 
 
-    public FlashcardService(FlashcardRepository repository, FlashcardListContentRepository contentRepository, AliasRepository aliasRepository, StatsQuizRepository quizStatsRepository) {
+    public FlashcardService(FlashcardRepository repository, FlashcardListContentRepository contentRepository, AliasRepository aliasRepository, StatsQuizRepository quizStatsRepository, SingleTranslationRepository translationRepository) {
         this.repository = repository;
         this.contentRepository = contentRepository;
         this.aliasRepository = aliasRepository;
         this.quizStatsRepository = quizStatsRepository;
+        this.translationRepository = translationRepository;
     }
 
     public Flashcard createFlashcard(Flashcard flashcard) {
@@ -47,6 +47,10 @@ public class FlashcardService {
 
     public List<Flashcard> findByWord(String word) {
         return repository.findByWord(word);
+    }
+
+    public List<SingleTranslation> findPopular(String language, Integer minPopularity) {
+        return translationRepository.findFilteredPopularTranslations(language, minPopularity);
     }
 
     public List<Flashcard> findInUsersDictionary(User user, FlashcardRequest flashcardRequest) {

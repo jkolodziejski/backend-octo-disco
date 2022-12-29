@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pl.put.backendoctodisco.entity.Flashcard;
+import pl.put.backendoctodisco.entity.responses.SingleTranslation;
 
 import java.util.List;
 

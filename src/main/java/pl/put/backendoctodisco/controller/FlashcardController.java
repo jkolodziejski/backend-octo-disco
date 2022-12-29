@@ -20,6 +20,7 @@ import pl.put.backendoctodisco.entity.requests.AddAliasRequest;
 import pl.put.backendoctodisco.entity.requests.FlashcardRequest;
 import pl.put.backendoctodisco.entity.responses.AllFlashcardsResponse;
 import pl.put.backendoctodisco.entity.responses.FlashcardResponse;
+import pl.put.backendoctodisco.entity.responses.SingleTranslation;
 import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.AliasService;
 import pl.put.backendoctodisco.service.FlashcardService;
@@ -201,5 +202,26 @@ public class FlashcardController {
         FlashcardResponse flashcardResponse = flashcardService.getFlashcardWithAlias(createdFlashcard.get());
 
         return new ResponseEntity<>(flashcardResponse, HttpStatus.CREATED);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Search local flashcards that occur as often as given popularity and in given language",
+            notes = "Returns list of every translation (1 word - 1 alias)")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully found"),
+            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
+    })
+    @GetMapping("/popular")
+    private ResponseEntity<List<SingleTranslation>> searchForPopular(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "language", required = false, defaultValue = "en") String language, @RequestParam(name = "min_popularity", required = false, defaultValue = "2") Integer min_popularity) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException{
+        User foundUser = userService.findUserByAuthToken(authToken);
+        AuthToken.validateToken(foundUser);
+        if(language == null){
+            language = "en";
+        }
+        if(min_popularity == null){
+            min_popularity = 2;
+        }
+
+        return new ResponseEntity<>(flashcardService.findPopular(language, min_popularity), HttpStatus.OK);
     }
 }
