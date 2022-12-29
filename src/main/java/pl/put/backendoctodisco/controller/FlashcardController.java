@@ -27,10 +27,7 @@ import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.utils.Language;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -53,22 +50,28 @@ public class FlashcardController {
             notes = "Returns the created flashcard")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
-            @ApiResponse(code = 400, message = "Nonexistent language"),
+            @ApiResponse(code = 400, message = "Nonexistent language or wrong translations request"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
             @ApiResponse(code = 409, message = "Flashcard already exists")
     })
     @PostMapping
-    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException {
+    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, IncorrectFlashcardRequestException {
         User foundUser = userService.findUserByAuthToken(authToken);
         FlashcardResponse flashcardResponse;
         AuthToken.validateToken(foundUser);
         if (!Language.contains(flashcardRequest.language)) {
             throw new NonexistentLanguageException();
         }
+        List<String> aliasLowercase = flashcardRequest.translation.stream().map(String::toLowerCase).toList();
+        for(String alias: aliasLowercase){
+            if(Collections.frequency(aliasLowercase, alias)>1){
+                throw new IncorrectFlashcardRequestException();
+            }
+        }
 
         List<Flashcard> filteredFlashcards = flashcardService.findInUsersDictionary(foundUser, flashcardRequest);
-        if (!filteredFlashcards.isEmpty()) {
-            aliasService.checkAlias(filteredFlashcards.get(0).getId(), flashcardRequest.translation);
+        for(Flashcard card: filteredFlashcards){
+            aliasService.checkAlias(card.getId(), flashcardRequest.translation);
         }
 
         Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));

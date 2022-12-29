@@ -29,7 +29,7 @@ public class AliasService {
         for (String aliasReq : aliases) {
             List<Alias> filteredAlias = foundAlias
                     .stream().filter(alias ->
-                            alias.getAlias().equals(aliasReq))
+                            alias.getAlias().equalsIgnoreCase(aliasReq))
                     .toList();
             if (!filteredAlias.isEmpty()) {
                 throw new FlashcardAlreadyExistsException();
