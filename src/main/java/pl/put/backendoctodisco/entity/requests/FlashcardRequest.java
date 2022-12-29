@@ -19,7 +19,7 @@ public class FlashcardRequest {
     @Column(name = "translation", nullable = false)
     public List<String> translation;
 
-    @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0", required = true)
-    @Column(name = "is_global", nullable = false)
+    @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0")
+    @Column(name = "is_global", nullable = true)
     public Boolean is_global;
 }
