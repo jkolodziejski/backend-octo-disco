@@ -41,7 +41,7 @@ public class Flashcard {
     public Flashcard(User user, FlashcardRequest request) {
         language = request.language;
         word = request.word;
-        isGlobal = false;
+        isGlobal = request.is_global;
         userId = user.getId();
     }
 

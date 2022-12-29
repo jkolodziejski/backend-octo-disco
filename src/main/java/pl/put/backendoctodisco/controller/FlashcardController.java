@@ -52,17 +52,24 @@ public class FlashcardController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Nonexistent language or wrong translations request"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)"),
+            @ApiResponse(code = 403, message = "Token not found, token expired (error specified in the message) or permission missing"),
             @ApiResponse(code = 409, message = "Flashcard already exists")
     })
     @PostMapping
-    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, IncorrectFlashcardRequestException {
+    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, IncorrectFlashcardRequestException, NoPermissionsException {
         User foundUser = userService.findUserByAuthToken(authToken);
         FlashcardResponse flashcardResponse;
         AuthToken.validateToken(foundUser);
         if (!Language.contains(flashcardRequest.language)) {
             throw new NonexistentLanguageException();
         }
+        if(flashcardRequest.is_global == null){
+            flashcardRequest.is_global = false;
+        }
+        if(flashcardRequest.is_global && !foundUser.getPermissions().equals("admin")){
+            throw new NoPermissionsException();
+        }
+
         List<String> aliasLowercase = flashcardRequest.translation.stream().map(String::toLowerCase).toList();
         for(String alias: aliasLowercase){
             if(Collections.frequency(aliasLowercase, alias)>1){
@@ -74,7 +81,6 @@ public class FlashcardController {
         for(Flashcard card: filteredFlashcards){
             aliasService.checkAlias(card.getId(), flashcardRequest.translation);
         }
-
         Flashcard createdFlashcard = flashcardService.createFlashcard(new Flashcard(foundUser, flashcardRequest));
         for (String aliasRest : flashcardRequest.translation) {
             aliasService.createAlias(new Alias(aliasRest, createdFlashcard.getId()));

@@ -18,4 +18,8 @@ public class FlashcardRequest {
     @ApiModelProperty(notes = "Translation of the word to polish", example = "[Polska]", required = true)
     @Column(name = "translation", nullable = false)
     public List<String> translation;
+
+    @ApiModelProperty(notes = "Indicates if flashcard is globally available for users", example = "0", required = true)
+    @Column(name = "is_global", nullable = false)
+    public Boolean is_global;
 }
