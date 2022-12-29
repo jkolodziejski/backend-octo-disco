@@ -63,7 +63,6 @@ public class AuthToken {
     static private SecretKey getSecretKey() throws PropertiesNotAvailableException {
         String unhashedKey = PropertiesReader.read("password.key");
         return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
-
     }
 
     public boolean isEmpty() {
