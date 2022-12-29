@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.exceptions.PropertiesNotAvailableException;
 import pl.put.backendoctodisco.exceptions.TokenExpiredException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
 import pl.put.backendoctodisco.exceptions.TokenUnauthorizedException;
@@ -30,7 +31,7 @@ public class AuthToken {
         this.token = token;
     }
 
-    public AuthToken(User user) {
+    public AuthToken(User user) throws PropertiesNotAvailableException {
         long now = System.currentTimeMillis();
         Date expirationDate = new Date((now + EXPIRATION_TIME_SEC));
 
@@ -47,7 +48,7 @@ public class AuthToken {
                 .compact();
     }
 
-    public static State validateToken(User user) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    public static State validateToken(User user) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, PropertiesNotAvailableException {
         State currentState = new AuthToken(user.getAuthToken()).validateSignature();
         switch (currentState) {
             case FAULTY -> throw new TokenNotFoundException();
@@ -59,20 +60,17 @@ public class AuthToken {
         }
     }
 
-    static private SecretKey getSecretKey() {
-        try {
-            String unhashedKey = Files.readAllLines(Paths.get("authorization.key")).get(0);
-            return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    static private SecretKey getSecretKey() throws PropertiesNotAvailableException {
+        String unhashedKey = PropertiesReader.read("password.key");
+        return Keys.hmacShaKeyFor(unhashedKey.getBytes(StandardCharsets.UTF_8));
+
     }
 
     public boolean isEmpty() {
         return token.isEmpty();
     }
 
-    public State validateSignature() {
+    public State validateSignature() throws PropertiesNotAvailableException {
         try {
             Jwts.parser()
                     .setSigningKey(getSecretKey())
@@ -83,6 +81,8 @@ public class AuthToken {
             return State.UNAUTHORIZED;
         } catch (Exception e) {
             return State.FAULTY;
+        } catch (PropertiesNotAvailableException e){
+            throw e;
         }
         return State.ACTIVE_USER;
     }

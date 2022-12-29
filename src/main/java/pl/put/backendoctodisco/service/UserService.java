@@ -3,6 +3,7 @@ package pl.put.backendoctodisco.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.put.backendoctodisco.entity.User;
+import pl.put.backendoctodisco.exceptions.PropertiesNotAvailableException;
 import pl.put.backendoctodisco.exceptions.TokenNotFoundException;
 import pl.put.backendoctodisco.exceptions.UserEmailAlreadyExistsException;
 import pl.put.backendoctodisco.exceptions.UserLoginAlreadyExistsException;
@@ -40,7 +41,7 @@ public class UserService {
         return users.stream().findFirst();
     }
 
-    public AuthToken authorizeUser(User user) {
+    public AuthToken authorizeUser(User user) throws PropertiesNotAvailableException {
         AuthToken token = new AuthToken(user);
         repository.setUserInfoById(token.toString(), user.getId());
         return token;

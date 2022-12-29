@@ -45,7 +45,7 @@ public class QuizController {
             @ApiResponse(code = 409, message = "Quiz not possible to make with given flashcard list")
     })
     @GetMapping
-    private ResponseEntity<Quiz> getQuiz(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "list_id") Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, QuizNotPossibleException {
+    private ResponseEntity<Quiz> getQuiz(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "list_id") Long list_id) throws AuthorizationExceptionResponse, QuizNotPossibleException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);

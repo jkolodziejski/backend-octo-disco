@@ -56,7 +56,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists")
     })
     @PostMapping
-    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, IncorrectFlashcardRequestException, NoPermissionsException {
+    private ResponseEntity<FlashcardResponse> createFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody FlashcardRequest flashcardRequest) throws AuthorizationExceptionResponse, NonexistentLanguageException, FlashcardAlreadyExistsException, IncorrectFlashcardRequestException, NoPermissionsException {
         User foundUser = userService.findUserByAuthToken(authToken);
         FlashcardResponse flashcardResponse;
         AuthToken.validateToken(foundUser);
@@ -99,7 +99,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Server error")
     })
     @DeleteMapping
-    private ResponseEntity<HttpStatus> deleteFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, FlashcardDoesNotExistException, ServerErrorException, ParameterIsMissingException, EntityNotAvailableException {
+    private ResponseEntity<HttpStatus> deleteFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long flashcardId) throws AuthorizationExceptionResponse, FlashcardDoesNotExistException, ServerErrorException, ParameterIsMissingException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if (flashcardId == null) {
@@ -134,7 +134,7 @@ public class FlashcardController {
                                                                          @PageableDefault(value = 25) Pageable pageable,
                                                                          @ApiParam(name = "dictionary", allowableValues = "global, local, both", required = true) String dictionary,
                                                                          String keyword,
-                                                                         @ApiParam(name = "language", allowableValues = "en", required = true) String language) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException, ParameterIsMissingException, NonexistentLanguageException, NonexistentDictionaryException, PageIndexOutOfRangeException {
+                                                                         @ApiParam(name = "language", allowableValues = "en", required = true) String language) throws AuthorizationExceptionResponse, ParameterIsMissingException, NonexistentLanguageException, NonexistentDictionaryException, PageIndexOutOfRangeException {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
 
@@ -182,7 +182,7 @@ public class FlashcardController {
             @ApiResponse(code = 409, message = "Flashcard already exists")
     })
     @PutMapping("/translations")
-    private ResponseEntity<FlashcardResponse> addAliasFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddAliasRequest alias_request) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, NonexistentLanguageException, FlashcardAlreadyExistsException, FlashcardDoesNotExistException, EntityNotAvailableException {
+    private ResponseEntity<FlashcardResponse> addAliasFlashcard(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody AddAliasRequest alias_request) throws AuthorizationExceptionResponse, NonexistentLanguageException, FlashcardAlreadyExistsException, FlashcardDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -218,7 +218,7 @@ public class FlashcardController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/popular")
-    private ResponseEntity<List<SingleTranslation>> searchForPopular(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "language", required = false, defaultValue = "en") String language, @RequestParam(name = "min_popularity", required = false, defaultValue = "2") Integer min_popularity) throws TokenNotFoundException, TokenUnauthorizedException, TokenExpiredException{
+    private ResponseEntity<List<SingleTranslation>> searchForPopular(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "language", required = false, defaultValue = "en") String language, @RequestParam(name = "min_popularity", required = false, defaultValue = "2") Integer min_popularity) throws AuthorizationExceptionResponse {
         User foundUser = userService.findUserByAuthToken(authToken);
         AuthToken.validateToken(foundUser);
         if(language == null){
