@@ -99,20 +99,4 @@ public class TestController {
 
         return new ResponseEntity<>(difficultyLevels, HttpStatus.OK);
     }
-
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get users exp",
-            notes = "Returns just exp")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully found users exp"),
-            @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
-    })
-    @GetMapping("/exp")
-    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
-        User foundUser = userService.findUserByAuthToken(authToken);
-
-        AuthToken.validateToken(foundUser);
-
-        return new ResponseEntity<>(foundUser.getExp(), HttpStatus.OK);
-    }
 }
