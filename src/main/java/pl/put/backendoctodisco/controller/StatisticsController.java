@@ -53,7 +53,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/quiz")
-    private ResponseEntity<CardListStatistics> sendQuizStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody QuizResultRequest quizResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<CardListStatistics> sendQuizStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody QuizResultRequest quizResult) throws AuthorizationExceptionResponse, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -75,7 +75,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/list")
-    private ResponseEntity<CardListStatistics> getCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<CardListStatistics> getCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws AuthorizationExceptionResponse, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -96,7 +96,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/lists")
-    private ResponseEntity<ArrayList<CardListStatistics>> getListsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<ArrayList<CardListStatistics>> getListsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws AuthorizationExceptionResponse, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -117,7 +117,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @PostMapping("/test")
-    private ResponseEntity<TestDifficultyStatistics> sendTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody TestResultRequest testResult) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<TestDifficultyStatistics> sendTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestBody TestResultRequest testResult) throws AuthorizationExceptionResponse, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -143,7 +143,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/test")
-    private ResponseEntity<TestDifficultyStatistics> getTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException {
+    private ResponseEntity<TestDifficultyStatistics> getTestStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id) throws AuthorizationExceptionResponse, ParameterIsMissingException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -165,7 +165,7 @@ public class StatisticsController {
             @ApiResponse(code = 409, message = "Server error")
     })
     @DeleteMapping("/list")
-    private ResponseEntity<HttpStatus> deleteCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, ServerErrorException {
+    private ResponseEntity<HttpStatus> deleteCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws AuthorizationExceptionResponse, ParameterIsMissingException, ServerErrorException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -188,7 +188,7 @@ public class StatisticsController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/exp")
-    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException {
+    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws AuthorizationExceptionResponse {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);

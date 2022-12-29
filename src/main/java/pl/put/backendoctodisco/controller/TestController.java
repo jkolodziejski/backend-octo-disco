@@ -52,7 +52,7 @@ public class TestController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping
-    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id, @RequestParam(name = "size", required = false) Integer size) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, EntityDoesNotExistException, EntityNotAvailableException {
+    private ResponseEntity<Test> getTest(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long difficulty_id, @RequestParam(name = "size", required = false) Integer size) throws AuthorizationExceptionResponse, ParameterIsMissingException, EntityDoesNotExistException, EntityNotAvailableException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -83,7 +83,7 @@ public class TestController {
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/levels")
-    private ResponseEntity<ArrayList<TestLevel>> getLevels(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, String language) throws TokenNotFoundException, TokenExpiredException, TokenUnauthorizedException, ParameterIsMissingException, NonexistentLanguageException {
+    private ResponseEntity<ArrayList<TestLevel>> getLevels(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, String language) throws AuthorizationExceptionResponse, ParameterIsMissingException, NonexistentLanguageException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);

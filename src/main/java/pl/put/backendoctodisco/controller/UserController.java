@@ -15,6 +15,7 @@ import pl.put.backendoctodisco.exceptions.*;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
 import pl.put.backendoctodisco.utils.Hash256;
+import pl.put.backendoctodisco.utils.PropertiesReader;
 
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class UserController {
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
+    public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws PropertiesNotAvailableException, UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
         User createdUser = userService.createUser(new User(registerRequest));
         AuthToken token = userService.authorizeUser(createdUser);
         return new ResponseEntity<>(new LoginResponse(createdUser.getPermissions(), token.toString()), HttpStatus.CREATED);
@@ -52,13 +53,13 @@ public class UserController {
             @ApiResponse(code = 404, message = "The user was not found")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, WrongPasswordException, SomethingWentWrongException {
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, WrongPasswordException, SomethingWentWrongException, PropertiesNotAvailableException {
         Optional<User> userToCheck = userService.findByLogin(loginRequest.login);
         if (userToCheck.isEmpty()) {
             throw new UserNotFoundException();
         }
 
-        final boolean passwordHash = false;
+        final boolean passwordHash = PropertiesReader.read("password.hash").equals("true");
 
         User foundUser = userToCheck.get();
         String password = foundUser.getPassword();
