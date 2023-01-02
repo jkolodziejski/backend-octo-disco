@@ -22,6 +22,7 @@ import pl.put.backendoctodisco.service.FlashcardService;
 import pl.put.backendoctodisco.service.StatisticsService;
 import pl.put.backendoctodisco.service.UserService;
 import pl.put.backendoctodisco.utils.AuthToken;
+import pl.put.backendoctodisco.utils.Language;
 
 import java.util.ArrayList;
 
@@ -165,7 +166,7 @@ public class StatisticsController {
             @ApiResponse(code = 409, message = "Server error")
     })
     @DeleteMapping("/list")
-    private ResponseEntity<HttpStatus> deleteCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, Long list_id) throws AuthorizationExceptionResponse, ParameterIsMissingException, ServerErrorException {
+    private ResponseEntity<HttpStatus> deleteCardsStatistics(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "list_id") Long list_id) throws AuthorizationExceptionResponse, ParameterIsMissingException, ServerErrorException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
@@ -185,13 +186,18 @@ public class StatisticsController {
             notes = "Returns just exp")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully found users exp"),
+            @ApiResponse(code = 400, message = "Nonexistent language"),
             @ApiResponse(code = 403, message = "Token not found or token expired (error specified in the message)")
     })
     @GetMapping("/exp")
-    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) throws AuthorizationExceptionResponse {
+    private ResponseEntity<Integer> getExp(@RequestHeader(name = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken, @RequestParam(name = "language", required = false, defaultValue = "en") String language) throws AuthorizationExceptionResponse, NonexistentLanguageException {
         User foundUser = userService.findUserByAuthToken(authToken);
 
         AuthToken.validateToken(foundUser);
+
+        if (!Language.contains(language)) {
+            throw new NonexistentLanguageException();
+        }
 
         return new ResponseEntity<>(foundUser.getExp(), HttpStatus.OK);
     }
