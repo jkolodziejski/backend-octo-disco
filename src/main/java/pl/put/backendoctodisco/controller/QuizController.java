@@ -52,8 +52,8 @@ public class QuizController {
 
         //TODO quiz might be empty
         List<FlashcardResponse> flashcards = flashcardService.getFlashcardsFromList(list_id);
-        if(flashcards.size() < 3){
-            throw new QuizNotPossibleException(Integer.toString(flashcards.size()), "3");
+        if(flashcards.size() < 4){
+            throw new QuizNotPossibleException(Integer.toString(flashcards.size()), "4");
         }
 
         List<FlashcardResponse> unlearnedFlashcards = flashcardService.getUnlearnedFlashcardsFromList(foundUser.getId(), list_id);
