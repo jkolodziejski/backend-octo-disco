@@ -5,6 +5,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.put.backendoctodisco.entity.requests.RegisterRequest;
+import pl.put.backendoctodisco.exceptions.PropertiesNotAvailableException;
+import pl.put.backendoctodisco.exceptions.SomethingWentWrongException;
+import pl.put.backendoctodisco.utils.Hash256;
+import pl.put.backendoctodisco.utils.PropertiesReader;
 
 import javax.persistence.*;
 
@@ -42,10 +46,15 @@ public class User {
     @Column(name = "exp")
     private Integer exp;
 
-    public User(RegisterRequest registerRequest) {
+    public User(RegisterRequest registerRequest) throws PropertiesNotAvailableException, SomethingWentWrongException {
         this.login = registerRequest.login;
         this.email = registerRequest.email;
-        this.password = registerRequest.password;
+        final boolean passwordHash = PropertiesReader.read("password.hash").equals("true");
+        if(passwordHash){
+            this.password = Hash256.password(registerRequest.password);
+        }else {
+            this.password = registerRequest.password;
+        }
         this.permissions="user";
         this.exp=0;
     }

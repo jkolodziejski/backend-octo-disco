@@ -38,7 +38,7 @@ public class UserController {
             @ApiResponse(code = 409, message = "User with such login or email already exists (error specified in the message)")
     })
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws PropertiesNotAvailableException, UserEmailAlreadyExistsException, UserLoginAlreadyExistsException {
+    public ResponseEntity<LoginResponse> createUser(@RequestBody RegisterRequest registerRequest) throws PropertiesNotAvailableException, UserEmailAlreadyExistsException, UserLoginAlreadyExistsException, SomethingWentWrongException {
         User createdUser = userService.createUser(new User(registerRequest));
         AuthToken token = userService.authorizeUser(createdUser);
         return new ResponseEntity<>(new LoginResponse(createdUser.getPermissions(), token.toString()), HttpStatus.CREATED);
@@ -62,11 +62,11 @@ public class UserController {
         final boolean passwordHash = PropertiesReader.read("password.hash").equals("true");
 
         User foundUser = userToCheck.get();
-        String password = foundUser.getPassword();
+        String password = loginRequest.password;
         if(passwordHash){
             password = Hash256.password(password);
         }
-        if (!password.equals(loginRequest.password)) {
+        if (!foundUser.getPassword().equals(password)) {
             throw new WrongPasswordException();
         }
 
